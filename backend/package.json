@@ -1,0 +1,16 @@
+{
+    "name": "tic-tac-toe-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "author": "",
+    "license": "MIT",
+    "scripts": {
+        "tsc": "tsc"
+    },
+    "dependencies": {
+        "@types/express": "4.16.1",
+        "express": "4.16.4",
+        "typescript": "3.3.3333"
+    }
+}
