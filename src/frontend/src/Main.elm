@@ -51,7 +51,11 @@ view : Model -> Browser.Document Msg
 view model =
     case model.page of
         NotFound ->
-            { title = "404 Not Found", body = [ p [] [ text "404 Not Found" ] ] }
+            let
+                title =
+                    "Page Not Found"
+            in
+            { title = title, body = [ h1 [] [ text title ] ] }
 
         Login login ->
             Skeleton.view LoginMsg (Login.view login)

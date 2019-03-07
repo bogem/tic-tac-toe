@@ -37,18 +37,18 @@ view model =
 
         bottomText =
             if model.isRegistering then
-                p [] [ text "Du hast schon einen Account? ", a [ href "#", onClick ClickedGoToLogin ] [ text "Log dich ein." ] ]
+                p [] [ text "Du hast schon einen Account? ", button [ class "button--link", onClick ClickedGoToLogin ] [ text "Log dich ein." ] ]
 
             else
-                p [] [ text "Du hast noch keinen Account? ", a [ href "#", onClick ClickedGoToRegister ] [ text "Registier dich jetzt." ] ]
+                p [] [ text "Du hast noch keinen Account? ", button [ class "button--link", onClick ClickedGoToRegister ] [ text "Registier dich jetzt." ] ]
     in
     { title = title
     , children =
         [ h1 [] [ text "Tic-Tac-Toe" ]
         , h2 [] [ text title ]
-        , input [ onInput EnteredLogin, placeholder "Nickname", value model.login ] []
-        , input [ onInput EnteredPassword, placeholder "Passwort", value model.password ] []
-        , button [ onClick ClickedSubmit ] [ text "Go" ]
+        , input [ class "mb-8", onInput EnteredLogin, placeholder "Nickname", value model.login ] []
+        , input [ class "mb-8", onInput EnteredPassword, placeholder "Passwort", value model.password ] []
+        , button [ class "mb-16", onClick ClickedSubmit ] [ text "Go" ]
         , bottomText
         ]
     }
