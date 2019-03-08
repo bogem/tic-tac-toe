@@ -1,4 +1,7 @@
-import * as React from "react";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
 import { render } from "react-dom";
 
-render(<p>HUI</p>, document.getElementById("react-root"));
+const App = () => <BrowserRouter />;
+
+render(<App />, document.getElementById("react-root"));

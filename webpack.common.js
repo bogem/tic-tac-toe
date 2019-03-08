@@ -35,7 +35,7 @@ module.exports = {
         ],
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin({ tsconfig: path.join(__dirname, "tsconfig.json"), watch: __dirname }),
+        new ForkTsCheckerWebpackPlugin({ tsconfig: path.join(__dirname, "tsconfig.json"), watch: frontendPath }),
         new LodashModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: "Tic-Tac-Toe",
