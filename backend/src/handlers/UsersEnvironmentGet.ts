@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
 
-import { UserEnvironmentGetResponseBody } from "common/types/api/user/environment/get/ResponseBody";
+import { UsersEnvironmentGetResponseBody } from "common/types/api/users/environment/get/ResponseBody";
 import { getUsernameWithToken, ERROR_NO_USERNAME_FOUND } from "../utils/Tokens";
 
-export const UserEnvironmentHandler: RequestHandler = async (req, res) => {
+export const UsersEnvironmentGetHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
     if (!token) {
         res.sendStatus(404);
@@ -13,7 +13,7 @@ export const UserEnvironmentHandler: RequestHandler = async (req, res) => {
     try {
         const username = await getUsernameWithToken(token);
 
-        res.json({ username } as UserEnvironmentGetResponseBody);
+        res.json({ username } as UsersEnvironmentGetResponseBody);
     } catch (e) {
         if (e === ERROR_NO_USERNAME_FOUND) {
             res.sendStatus(404);

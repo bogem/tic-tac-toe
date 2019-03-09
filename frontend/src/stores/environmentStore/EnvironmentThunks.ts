@@ -1,8 +1,8 @@
 import { AxiosResponse, AxiosError } from "axios";
 
 import { RootDispatch } from "../rootStore/RootTypes";
-import { UserEnvironmentGetResponseBody } from "common/types/api/user/environment/get/ResponseBody";
-import { UserNewPostResponseBody } from "common/types/api/user/new/post/ResponseBody";
+import { UsersEnvironmentGetResponseBody } from "common/types/api/users/environment/get/ResponseBody";
+import { UsersCreatePostResponseBody } from "common/types/api/users/create/post/ResponseBody";
 import { axios } from "../../utils/Api";
 import { environmentSetEnvironment } from "./EnvironmentActions";
 import { toast } from "react-toastify";
@@ -12,7 +12,7 @@ export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
 
     axios
         .get("/api/user/environment")
-        .then((response: AxiosResponse<UserEnvironmentGetResponseBody>) => {
+        .then((response: AxiosResponse<UsersEnvironmentGetResponseBody>) => {
             dispatch(environmentSetEnvironment(response.data));
         })
         .catch(error => {
@@ -27,7 +27,7 @@ export const environmentRegister = (username: string, password: string) => (disp
 
     return axios
         .post("/api/user/new", { username, password })
-        .then((response: AxiosResponse<UserNewPostResponseBody>) => {
+        .then((response: AxiosResponse<UsersCreatePostResponseBody>) => {
             dispatch(environmentSetEnvironment(response.data));
         })
         .catch((error: AxiosError) => {

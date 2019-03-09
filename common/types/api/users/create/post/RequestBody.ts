@@ -1,4 +1,4 @@
-export interface UserNewPostRequestBody {
+export interface UsersCreatePostRequestBody {
     username: string;
     password: string;
 }
