@@ -3,23 +3,35 @@ import "react-toastify/dist/ReactToastify.css";
 
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
-import { render } from "react-dom";
+import { Grommet } from "grommet";
 import { ToastContainer, Slide } from "react-toastify";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
 
+import { GlobalStyle, theme } from "./styles";
 import { LoginPage } from "./pages/LoginPage";
+import { rootStore } from "./stores/rootStore/RootStore";
 
 const App = () => (
     <BrowserRouter>
-        <ToastContainer
-            autoClose={5 * 1000}
-            closeOnClick={false}
-            draggable={false}
-            hideProgressBar={true}
-            position="bottom-left"
-            transition={Slide}
-        />
+        <Provider store={rootStore}>
+            <Grommet full={true} plain={true} theme={theme}>
+                <GlobalStyle />
 
-        <Route path="/login" component={LoginPage} />
+                <ToastContainer
+                    autoClose={9 * 1000}
+                    className="toast-container"
+                    closeOnClick={false}
+                    draggable={false}
+                    hideProgressBar={true}
+                    position="bottom-left"
+                    toastClassName="toast"
+                    transition={Slide}
+                />
+
+                <Route path="/login" component={LoginPage} />
+            </Grommet>
+        </Provider>
     </BrowserRouter>
 );
 

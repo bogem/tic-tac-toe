@@ -3,7 +3,7 @@ import { AxiosResponse } from "axios";
 import { RootDispatch } from "../rootStore/RootTypes";
 import { UserEnvironmentGetResponseBody } from "common/types/api/user/environment/get/ResponseBody";
 import { UserNewPostResponseBody } from "common/types/api/user/new/post/ResponseBody";
-import { axios } from "frontend/src/utils/Api";
+import { axios } from "../../utils/Api";
 import { environmentSetEnvironment } from "./EnvironmentActions";
 
 export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
@@ -24,7 +24,9 @@ export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
 export const environmentRegister = (username: string, password: string) => (dispatch: RootDispatch) => {
     dispatch(environmentSetEnvironment("Loading"));
 
-    axios.post("/api/user/new", { username, password }).then((response: AxiosResponse<UserNewPostResponseBody>) => {
-        dispatch(environmentSetEnvironment(response.data));
-    });
+    return axios
+        .post("/api/user/new", { username, password })
+        .then((response: AxiosResponse<UserNewPostResponseBody>) => {
+            dispatch(environmentSetEnvironment(response.data));
+        });
 };

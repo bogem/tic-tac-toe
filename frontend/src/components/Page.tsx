@@ -21,7 +21,9 @@ export const Page = (props: PageProps) => {
 };
 
 const PageContainer = styled.main`
+    align-items: center;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    justify-content: center;
 `;
