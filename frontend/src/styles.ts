@@ -184,6 +184,11 @@ export const GlobalStyle = createGlobalStyle`
         margin-top: 0;
     }
 
+    a {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
     /* --- toast styles --- */
 
     .toast {

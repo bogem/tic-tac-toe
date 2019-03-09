@@ -2,15 +2,18 @@
 import "react-toastify/dist/ReactToastify.css";
 
 import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Grommet } from "grommet";
 import { ToastContainer, Slide } from "react-toastify";
 import { render } from "react-dom";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 
 import { GlobalStyle, theme } from "./styles";
-import { LoginPage } from "./pages/LoginPage";
+import { LoginPage } from "./pages/Login";
 import { rootStore } from "./stores/rootStore/RootStore";
+import { HomePage } from "./pages/Home";
+import { RootDispatch } from "./stores/rootStore/RootTypes";
+import { environmentGetEnvironment } from "./stores/environmentStore/EnvironmentThunks";
 
 const App = () => (
     <BrowserRouter>
@@ -29,10 +32,35 @@ const App = () => (
                     transition={Slide}
                 />
 
-                <Route path="/login" component={LoginPage} />
+                <EnvironmentLoader />
+
+                <Switch>
+                    {/* <Route path="/" component={RootPage} /> */}
+                    <Route path="/login" component={LoginPage} />
+                    <Route path="/home" component={HomePage} />
+                </Switch>
             </Grommet>
         </Provider>
     </BrowserRouter>
 );
+
+interface EnvironmentLoaderProps {
+    getEnvironment: () => void;
+}
+
+const UnenhancedEnvironmentLoader = (props: EnvironmentLoaderProps) => {
+    React.useEffect(props.getEnvironment, []);
+
+    return null;
+};
+
+const EnvironmentLoader = connect(
+    null,
+    (dispatch: RootDispatch) => ({
+        getEnvironment: () => {
+            dispatch(environmentGetEnvironment());
+        },
+    })
+)(UnenhancedEnvironmentLoader);
 
 render(<App />, document.getElementById("react-root"));
