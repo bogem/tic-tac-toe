@@ -1,22 +1,18 @@
-import express = require("express");
-import bodyParser = require("body-parser");
-import cors = require("cors");
+import bodyParser from "body-parser";
+import cookieSession from "cookie-session";
+import cors from "cors";
+import express from "express";
 
-process.title = "tic-tac-toe-backend";
+import { UserNewHander } from "./handlers/UserNew";
 
 const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors(), bodyParser.json(), cookieSession());
 
-app.post("/api/user/new", (req, res) => {
-    res.send(req.body.username);
-});
+app.post("/api/user/new", UserNewHander);
 
 app.get("/api/user/environment", (_, res) => {
     res.json({});
 });
 
-app.listen(3000, function() {
-    console.log("Example app listening on port 3000!");
-});
+app.listen(3000);
