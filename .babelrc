@@ -1,0 +1,8 @@
+{
+    "plugins": [["@babel/plugin-transform-runtime", { "corejs": 2 }], "lodash"],
+    "presets": [
+        ["@babel/env", { "targets": "last 3 Chrome versions", "modules": false, "useBuiltIns": "usage" }],
+        "@babel/react",
+        "@babel/typescript"
+    ]
+}

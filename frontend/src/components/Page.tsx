@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
-import styled from "styled-components";
 import React from "react";
+import styled from "styled-components";
 
 interface PageProps {
     error?: string;
