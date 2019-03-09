@@ -1,10 +1,11 @@
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 
 import { RootDispatch } from "../rootStore/RootTypes";
 import { UserEnvironmentGetResponseBody } from "common/types/api/user/environment/get/ResponseBody";
 import { UserNewPostResponseBody } from "common/types/api/user/new/post/ResponseBody";
 import { axios } from "../../utils/Api";
 import { environmentSetEnvironment } from "./EnvironmentActions";
+import { toast } from "react-toastify";
 
 export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
     dispatch(environmentSetEnvironment("Loading"));
@@ -28,5 +29,14 @@ export const environmentRegister = (username: string, password: string) => (disp
         .post("/api/user/new", { username, password })
         .then((response: AxiosResponse<UserNewPostResponseBody>) => {
             dispatch(environmentSetEnvironment(response.data));
+        })
+        .catch((error: AxiosError) => {
+            dispatch(environmentSetEnvironment("Not Asked"));
+
+            if (error.response && error.response.status === 400) {
+                if (error.response.data === "USER_EXISTS_ALREADY") {
+                    toast.error("Dieser Benutzer existiert schon.");
+                }
+            }
         });
 };

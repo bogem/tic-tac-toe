@@ -6,9 +6,10 @@ import { toast } from "react-toastify";
 import { Page } from "../components/Page";
 import { handleTextInput } from "../utils/Handlers";
 import { environmentRegister } from "../stores/environmentStore/EnvironmentThunks";
-import { RootDispatch } from "../stores/rootStore/RootTypes";
+import { RootDispatch, RootState } from "../stores/rootStore/RootTypes";
 
 interface LoginPageReduxProps {
+    isLoading: boolean;
     login: (username: string, password: string) => void;
     register: (username: string, password: string) => Promise<void>;
 }
@@ -31,7 +32,7 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
     const title = isRegistering ? "Registrieren" : "Einloggen";
 
     return (
-        <Page title={title}>
+        <Page isLoading={props.isLoading} title={title}>
             <Heading level="1">Tic-Tac-Toe</Heading>
 
             <Heading level="2">{title}</Heading>
@@ -69,7 +70,9 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
 };
 
 export const LoginPage = connect(
-    null,
+    (rootState: RootState) => ({
+        isLoading: rootState.environment.environment === "Loading",
+    }),
     (dispatch: RootDispatch) => ({
         login: (username: string, password: string) => {},
         register: (username: string, password: string) => dispatch(environmentRegister(username, password)),
