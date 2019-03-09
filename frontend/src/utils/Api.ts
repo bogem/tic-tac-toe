@@ -11,7 +11,7 @@ export const isResponseError = <T>(apiData: ApiData<T>): apiData is AxiosError =
 
 export const axios = originalAxios.create({
     baseURL: "http://localhost:3000/",
-    withCredentials: false,
+    withCredentials: true,
 });
 
 axios.interceptors.response.use(undefined, error => {

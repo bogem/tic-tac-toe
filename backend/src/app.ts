@@ -9,7 +9,11 @@ import { UsersLoginPostHandler } from "./handlers/UsersLoginPost";
 
 const app = express();
 
-app.use(cors(), bodyParser.json(), cookieSession({ name: "tic-tac-toe", keys: ["12345"] }));
+app.use(
+    cors({ credentials: true, origin: "http://localhost:3001" }),
+    bodyParser.json(),
+    cookieSession({ name: "tic-tac-toe", keys: ["12345"] })
+);
 
 app.post("/api/users/create", UsersCreatePostHandler);
 app.get("/api/users/environment", UsersEnvironmentGetHandler);
