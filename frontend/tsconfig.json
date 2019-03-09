@@ -1,8 +1,10 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
+        "noEmit": true,
+        "jsx": "react",
         "target": "esnext",
         "outDir": "./dist",
-        "rootDir": "./src"
-    },
+        "rootDirs": ["./src", "../common"]
+    }
 }
