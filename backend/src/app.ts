@@ -3,16 +3,14 @@ import cookieSession from "cookie-session";
 import cors from "cors";
 import express from "express";
 
-import { UserNewHander } from "./handlers/UserNew";
+import { UserNewHandler } from "./handlers/UserNew";
+import { UserEnvironmentHandler } from "./handlers/UserEnvironment";
 
 const app = express();
 
-app.use(cors(), bodyParser.json(), cookieSession());
+app.use(cors(), bodyParser.json(), cookieSession({ name: "tic-tac-toe", keys: ["12345"] }));
 
-app.post("/api/user/new", UserNewHander);
-
-app.get("/api/user/environment", (_, res) => {
-    res.json({});
-});
+app.post("/api/user/new", UserNewHandler);
+app.get("/api/user/environment", UserEnvironmentHandler);
 
 app.listen(3000);

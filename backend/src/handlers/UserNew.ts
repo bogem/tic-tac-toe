@@ -3,8 +3,9 @@ import { RequestHandler } from "express";
 import { UserNewPostRequestBody } from "common/types/api/user/new/post/RequestBody";
 import { UserNewPostResponseBody } from "common/types/api/user/new/post/ResponseBody";
 import { docClient } from "../db/Db";
+import { generateAndSaveToken } from "../utils/Tokens";
 
-export const UserNewHander: RequestHandler = async (req, res) => {
+export const UserNewHandler: RequestHandler = async (req, res) => {
     const { username, password } = req.body as UserNewPostRequestBody;
 
     try {
@@ -17,7 +18,7 @@ export const UserNewHander: RequestHandler = async (req, res) => {
         await putUser(username, password);
 
         if (req.session) {
-            req.session;
+            req.session.token = await generateAndSaveToken(username);
         }
 
         res.json({ username, password } as UserNewPostResponseBody);

@@ -1,7 +1,7 @@
 import uuid = require("uuid/v4");
 import { docClient } from "../db/Db";
 
-export const NO_USERNAME_FOUND = new Error("No username found");
+export const ERROR_NO_USERNAME_FOUND = new Error("No username found");
 
 export const generateAndSaveToken = (username: string): Promise<string> => {
     const token = uuid();
@@ -41,7 +41,7 @@ export const getUsernameWithToken = (token: string): Promise<string> => {
                 reject(err);
             } else {
                 if (!data.Item) {
-                    reject(NO_USERNAME_FOUND);
+                    reject(ERROR_NO_USERNAME_FOUND);
                 } else {
                     resolve(data.Item.username as string);
                 }
