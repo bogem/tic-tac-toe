@@ -1,7 +1,10 @@
 import { RequestHandler } from "express";
 
 import { UsersCreatePostRequestBody } from "common/types/api/users/create/post/RequestBody";
-import { UsersCreatePostResponseBody } from "common/types/api/users/create/post/ResponseBody";
+import {
+    UsersCreatePostResponseBody,
+    UsersCreatePostErrorMessages,
+} from "../../../common/types/api/users/create/post/ResponseBody";
 import { docClient } from "../db/Db";
 import { generateAndSaveToken } from "../utils/Tokens";
 import { doesUserExist } from "../db/Fns";
@@ -12,7 +15,7 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
     try {
         if (await doesUserExist(username)) {
             res.status(400);
-            res.send("USER_EXISTS_ALREADY");
+            res.send(UsersCreatePostErrorMessages.ALREADY_EXISTING_USER);
             return;
         }
 

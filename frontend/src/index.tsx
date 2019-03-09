@@ -19,7 +19,7 @@ const App = () => (
                 <GlobalStyle />
 
                 <ToastContainer
-                    autoClose={9 * 1000}
+                    autoClose={7 * 1000}
                     className="toast-container"
                     closeOnClick={false}
                     draggable={false}

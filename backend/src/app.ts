@@ -13,6 +13,6 @@ app.use(cors(), bodyParser.json(), cookieSession({ name: "tic-tac-toe", keys: ["
 
 app.post("/api/users/create", UsersCreatePostHandler);
 app.get("/api/users/environment", UsersEnvironmentGetHandler);
-app.get("/api/users/login", UsersLoginPostHandler);
+app.post("/api/users/login", UsersLoginPostHandler);
 
 app.listen(3000);

@@ -4,5 +4,5 @@
         "target": "es2017",
         "outDir": "./dist",
         "rootDirs": ["./src", "../common"]
-    },
+    }
 }

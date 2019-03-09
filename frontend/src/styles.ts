@@ -198,7 +198,12 @@ export const GlobalStyle = createGlobalStyle`
     .toast-container {
         .Toastify__toast--error {
             background: #fff !important;
-            color: #e00 !important;
+            color: #ff4040 !important;
+        }
+
+        .Toastify__toast--success {
+            background: #fff !important;
+            color: #00c781 !important;
         }
 
         .Toastify__close-button {

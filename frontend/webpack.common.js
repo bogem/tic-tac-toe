@@ -21,6 +21,10 @@ module.exports = {
     },
 
     resolve: {
+        alias: {
+            common: path.resolve(__dirname, "../common"),
+            frontend: path.resolve(__dirname),
+        },
         extensions: [".ts", ".tsx", ".js"],
     },
 

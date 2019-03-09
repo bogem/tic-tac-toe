@@ -1,17 +1,16 @@
 import { connect } from "react-redux";
 import React, { useState } from "react";
 import { Heading, Form, TextInput, Text, Button, Box, Anchor } from "grommet";
-import { toast } from "react-toastify";
 
 import { Page } from "../components/Page";
 import { handleTextInput } from "../utils/Handlers";
-import { environmentRegister } from "../stores/environmentStore/EnvironmentThunks";
+import { environmentRegister, environmentLogin } from "../stores/environmentStore/EnvironmentThunks";
 import { RootDispatch, RootState } from "../stores/rootStore/RootTypes";
 
 interface LoginPageReduxProps {
     isLoading: boolean;
     login: (username: string, password: string) => void;
-    register: (username: string, password: string) => Promise<void>;
+    register: (username: string, password: string) => void;
 }
 
 type LoginPageProps = LoginPageReduxProps;
@@ -23,9 +22,9 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
 
     const handleSubmit = () => {
         if (isRegistering) {
-            props.register(username, password).then(() => {
-                toast("Success!");
-            });
+            props.register(username, password);
+        } else {
+            props.login(username, password);
         }
     };
 
@@ -74,7 +73,11 @@ export const LoginPage = connect(
         isLoading: rootState.environment.environment === "Loading",
     }),
     (dispatch: RootDispatch) => ({
-        login: (username: string, password: string) => {},
-        register: (username: string, password: string) => dispatch(environmentRegister(username, password)),
+        login: (username: string, password: string) => {
+            dispatch(environmentLogin(username, password));
+        },
+        register: (username: string, password: string) => {
+            dispatch(environmentRegister(username, password));
+        },
     })
 )(UnenhancedLoginPage);

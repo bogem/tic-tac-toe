@@ -3,7 +3,10 @@ import { RequestHandler } from "express";
 import { generateAndSaveToken } from "../utils/Tokens";
 import { doesUserExist } from "../db/Fns";
 import { docClient } from "../db/Db";
-import { UsersLoginPostResponseBody } from "common/types/api/users/login/post/ResponseBody";
+import {
+    UsersLoginPostResponseBody,
+    UsersLoginPostErrorMessages,
+} from "../../../common/types/api/users/login/post/ResponseBody";
 import { UsersLoginPostRequestBody } from "common/types/api/users/login/post/RequestBody";
 
 export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
@@ -12,15 +15,15 @@ export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
     try {
         const userExists = await doesUserExist(username);
         if (!userExists) {
-            res.status(400);
-            res.send("USER_DOES_NOT_EXIST");
+            res.status(404);
+            res.send(UsersLoginPostErrorMessages.NONEXISTENT_USER);
             return;
         }
 
         const passwordCorrect = await checkPasswordCorrectness(username, password);
         if (!passwordCorrect) {
             res.status(400);
-            res.send("INVALID_PASSWORD");
+            res.send(UsersLoginPostErrorMessages.INCORRECT_PASSWORD);
             return;
         }
 
