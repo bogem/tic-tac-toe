@@ -1,9 +1,10 @@
 import { connect } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { Field, FieldProps, Formik } from "formik";
 import { Heading, Form, TextInput, Text, Button, Box, Anchor, FormField } from "grommet";
+import * as yup from "yup";
 
 import { Page } from "../components/Page";
-import { handleTextInput } from "../utils/Handlers";
 import { environmentRegister, environmentLogin } from "../stores/environmentStore/EnvironmentThunks";
 import { RootDispatch, RootState } from "../stores/rootStore/RootTypes";
 import { RouteComponentProps } from "react-router";
@@ -18,65 +19,89 @@ interface LoginPageReduxProps {
 
 type LoginPageProps = LoginPageReduxProps & RouteComponentProps;
 
-const UnenhancedLoginPage = (props: LoginPageProps) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [isRegistering, setIsRegistering] = useState(false);
+type LoginPageValues = {
+    username: string;
+    password: string;
+    isRegistering: boolean;
+};
 
-    React.useEffect(() => {
+const UnenhancedLoginPage = (props: LoginPageProps) => {
+    useEffect(() => {
         if (props.isLoggedIn) {
             props.history.push("/home");
         }
     });
 
-    const handleSubmit = () => {
-        const submitFunc = isRegistering ? props.register : props.login;
-        submitFunc(username, password);
-    };
-
-    const title = isRegistering ? "Registrieren" : "Einloggen";
-
     return (
-        <Page isBlockedLoading={props.isLoading} title={title}>
-            <Heading level="1">Tic-Tac-Toe</Heading>
+        <Formik
+            initialValues={{ username: "", password: "", isRegistering: true } as LoginPageValues}
+            onSubmit={values => {
+                const submitFunc = values.isRegistering ? props.register : props.login;
+                submitFunc(values.username, values.password);
+            }}
+            validationSchema={yup.object().shape({
+                username: yup.string().required("Bitte Benutzername eingeben"),
+                password: yup
+                    .string()
+                    .required("Bitte Password eingeben")
+                    .min(5, "Bitte mindestens 5 Zeichen eingeben"),
+            })}
+            validateOnBlur={true}
+            validateOnChange={true}
+            render={({ errors, handleSubmit, setFieldValue, touched, values }) => {
+                const title = values.isRegistering ? "Registrieren" : "Einloggen";
 
-            <Form onSubmit={handleSubmit}>
-                <Box align="center" gap="small" margin={{ bottom: "24px" }}>
-                    <FormField>
-                        <TextInput
-                            onChange={handleTextInput(setUsername)}
-                            placeholder="Benutzername"
-                            value={username}
-                        />
-                    </FormField>
+                return (
+                    <Page isBlockedLoading={props.isLoading} public={true} title={title}>
+                        <Heading level="1">Tic-Tac-Toe</Heading>
 
-                    <FormField>
-                        <TextInput
-                            onChange={handleTextInput(setPassword)}
-                            placeholder="Passwort"
-                            type="password"
-                            value={password}
-                        />
-                    </FormField>
+                        <Form onSubmit={handleSubmit}>
+                            <Box align="center" gap="small" margin={{ bottom: "24px" }} width="220px">
+                                <Field
+                                    name="username"
+                                    render={({ field }: FieldProps) => (
+                                        <FormField error={touched.username && errors.username}>
+                                            <TextInput placeholder="Benutzername" {...field} />
+                                        </FormField>
+                                    )}
+                                />
 
-                    <Button label={title} primary type="submit" />
-                </Box>
-            </Form>
+                                <Field
+                                    name="password"
+                                    render={({ field }: FieldProps) => (
+                                        <FormField error={touched.password && errors.password}>
+                                            <TextInput {...field} placeholder="Passwort" type="password" />
+                                        </FormField>
+                                    )}
+                                />
 
-            <Text>
-                {isRegistering ? (
-                    <>
-                        Du hast schon einen Account?{" "}
-                        <Anchor label="Log dich ein." onClick={() => setIsRegistering(false)} />
-                    </>
-                ) : (
-                    <>
-                        Du hast noch keinen Account?{" "}
-                        <Anchor label="Registrier dich." onClick={() => setIsRegistering(true)} />
-                    </>
-                )}
-            </Text>
-        </Page>
+                                <Button label={title} primary type="submit" />
+                            </Box>
+                        </Form>
+
+                        <Text>
+                            {values.isRegistering ? (
+                                <>
+                                    Du hast schon einen Account?{" "}
+                                    <Anchor
+                                        label="Log dich ein."
+                                        onClick={() => setFieldValue("isRegistering", false)}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    Du hast noch keinen Account?{" "}
+                                    <Anchor
+                                        label="Registrier dich."
+                                        onClick={() => setFieldValue("isRegistering", true)}
+                                    />
+                                </>
+                            )}
+                        </Text>
+                    </Page>
+                );
+            }}
+        />
     );
 };
 
