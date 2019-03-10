@@ -14,6 +14,7 @@ import { rootStore } from "./stores/rootStore/RootStore";
 import { HomePage } from "./pages/Home";
 import { RootDispatch } from "./stores/rootStore/RootTypes";
 import { environmentGetEnvironment } from "./stores/environmentStore/EnvironmentThunks";
+import { RootPage } from "./pages/Root";
 
 const App = () => (
     <BrowserRouter>
@@ -35,7 +36,7 @@ const App = () => (
                 <EnvironmentLoader />
 
                 <Switch>
-                    {/* <Route path="/" component={RootPage} /> */}
+                    <Route path="/" exact component={RootPage} />
                     <Route path="/login" component={LoginPage} />
                     <Route path="/home" component={HomePage} />
                 </Switch>
