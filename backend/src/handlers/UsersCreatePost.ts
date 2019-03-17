@@ -6,11 +6,12 @@ import {
     UsersCreatePostErrorMessages,
 } from "../../../common/types/api/users/create/post/ResponseBody";
 import { docClient } from "../db/Db";
-import { generateAndSaveToken } from "../utils/Tokens";
 import { doesUserExist } from "../db/Fns";
+import { generateAndSaveToken } from "../utils/Tokens";
 
 export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
-    const { username, password } = req.body as UsersCreatePostRequestBody;
+    const body = req.body as UsersCreatePostRequestBody;
+    const { username } = body;
 
     try {
         if (await doesUserExist(username)) {
@@ -19,24 +20,21 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
             return;
         }
 
-        await putUser(username, password);
+        await putUser(body);
 
         if (req.session) {
             req.session.token = await generateAndSaveToken(username);
         }
 
-        res.json({ username, password } as UsersCreatePostResponseBody);
+        res.json(body as UsersCreatePostResponseBody);
     } catch (e) {
         console.log(e);
         res.sendStatus(500);
     }
 };
 
-const putUser = (username: string, password: string): Promise<void> => {
-    const params = {
-        TableName: "Users",
-        Item: { username, password },
-    };
+const putUser = (user: UsersCreatePostRequestBody): Promise<void> => {
+    const params = { TableName: "Users", Item: user };
 
     return new Promise((resolve, reject) => {
         docClient.put(params, err => {

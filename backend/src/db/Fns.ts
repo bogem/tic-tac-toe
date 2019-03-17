@@ -1,4 +1,4 @@
-import { docClient } from "../db/Db";
+import { docClient } from "./Db";
 
 export const doesUserExist = (username: string): Promise<boolean> => {
     const params = {

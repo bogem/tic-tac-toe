@@ -1,6 +1,7 @@
-import { db } from "./Db";
 import { AWSError } from "aws-sdk";
 import { KeySchema, AttributeDefinitions } from "aws-sdk/clients/dynamodb";
+
+import { db } from "./Db";
 
 const createTable = (params: {
     TableName: string;
@@ -17,9 +18,7 @@ const createTable = (params: {
         },
         (err: AWSError) => {
             if (err) {
-                console.error(
-                    `Unable to create table ${params.TableName}. Error JSON: ${JSON.stringify(err, null, 2)}`
-                );
+                console.error(`Unable to create table "${params.TableName}": ${JSON.stringify(err)}`);
             } else {
                 console.log(`Table "${params.TableName}" succesfully created!`);
             }
@@ -37,4 +36,16 @@ createTable({
     TableName: "Tokens",
     KeySchema: [{ AttributeName: "token", KeyType: "HASH" }],
     AttributeDefinitions: [{ AttributeName: "token", AttributeType: "S" }],
+});
+
+createTable({
+    TableName: "Games",
+    KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+    AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+});
+
+createTable({
+    TableName: "GamesHistories",
+    KeySchema: [],
+    AttributeDefinitions: [],
 });

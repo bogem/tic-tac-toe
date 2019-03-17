@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import React, { useEffect } from "react";
 import { Field, FieldProps, Formik } from "formik";
 import { Heading, Form, TextInput, Text, Button, Box, Anchor, FormField } from "grommet";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 
 import { Page } from "../components/Page";
@@ -37,7 +38,11 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
             initialValues={{ username: "", password: "", isRegistering: true } as LoginPageValues}
             onSubmit={values => {
                 const submitFunc = values.isRegistering ? props.register : props.login;
-                submitFunc(values.username, values.password);
+                const actionText = values.isRegistering ? "registriert" : "eingeloggt";
+
+                submitFunc(values.username, values.password).then(() => {
+                    toast(`Hi ${values.username}, du bist erfolgreich ${actionText}!`);
+                });
             }}
             validationSchema={yup.object().shape({
                 username: yup.string().required("Bitte Benutzername eingeben"),
