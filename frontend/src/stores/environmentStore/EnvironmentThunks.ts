@@ -39,7 +39,7 @@ export const environmentLogin = (username: string, password: string) => (dispatc
         .then((response: AxiosResponse<UsersLoginPostResponseBody>) => {
             dispatch(environmentSetEnvironment(response.data));
 
-            toast.success("Du bist erfolgreich eingeloggt");
+            toast(`Hi ${username}, du bist erfolgreich eingeloggt`);
 
             return response;
         })
@@ -68,7 +68,7 @@ export const environmentRegister = (username: string, password: string) => (disp
         .then((response: AxiosResponse<UsersCreatePostResponseBody>) => {
             dispatch(environmentSetEnvironment(response.data));
 
-            toast.success("Du bist erfolgreich registriert");
+            toast(`Hi ${username}, du bist erfolgreich registriert`);
 
             return response;
         })
