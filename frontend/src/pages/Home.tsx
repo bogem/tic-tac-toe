@@ -107,7 +107,7 @@ const CreateGameModal = ({ onClose }: HomeModalProps) => (
                 }}
                 render={({ handleSubmit, values }) => (
                     <Form onSubmit={handleSubmit}>
-                        <Box align="center">
+                        <Box align="start">
                             <Field
                                 name="name"
                                 render={({ field }: FieldProps) => (
@@ -120,18 +120,32 @@ const CreateGameModal = ({ onClose }: HomeModalProps) => (
                             <Field
                                 name="size"
                                 render={({ field }: FieldProps) => (
-                                    <label>
-                                        Größe: <input {...field} type="number" /> x{" "}
-                                        <input disabled readOnly value={values.size} />
-                                    </label>
+                                    <Box align="center" direction="row" margin={{ bottom: "16px" }}>
+                                        <Text>Größe:</Text> <SizeInput {...field} /> x {values.size}
+                                    </Box>
                                 )}
                             />
 
-                            <Button label="Erstellen" primary type="submit" />
+                            <Button alignSelf="center" label="Erstellen" primary type="submit" />
                         </Box>
                     </Form>
                 )}
             />
         </Box>
     </Layer>
+);
+
+interface SizeInputProps {
+    disabled?: boolean;
+    name?: string;
+    onBlur?: (event: React.SyntheticEvent<HTMLInputElement>) => void;
+    onChange?: (event: React.SyntheticEvent<HTMLInputElement>) => void;
+    readOnly?: boolean;
+    value: number;
+}
+
+const SizeInput = (props: SizeInputProps) => (
+    <Box margin={{ left: "8px", right: "8px" }} width="60px">
+        <TextInput {...props} type="number" />
+    </Box>
 );
