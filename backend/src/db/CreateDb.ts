@@ -46,6 +46,6 @@ createTable({
 
 createTable({
     TableName: "GamesHistories",
-    KeySchema: [],
-    AttributeDefinitions: [],
+    KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+    AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
 });

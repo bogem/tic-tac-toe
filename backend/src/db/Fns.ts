@@ -1,4 +1,18 @@
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
+
 import { docClient } from "./Db";
+import { GameStatus } from "common/types/game";
+
+export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
+    new Promise((resolve, reject) => {
+        docClient.put(params, err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
 
 export const doesUserExist = (username: string): Promise<boolean> => {
     const params = {
@@ -22,3 +36,11 @@ export const doesUserExist = (username: string): Promise<boolean> => {
         });
     });
 };
+
+interface GamesHistoriesItem {
+    id: string;
+    gameId: string;
+    status: GameStatus;
+}
+
+export const putGamesHistoriesItem = (item: GamesHistoriesItem) => put({ TableName: "GamesHistories", Item: item });

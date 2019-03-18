@@ -5,8 +5,7 @@ import {
     UsersCreatePostResponseBody,
     UsersCreatePostErrorMessages,
 } from "../../../common/types/api/users/create/post/ResponseBody";
-import { docClient } from "../db/Db";
-import { doesUserExist } from "../db/Fns";
+import { doesUserExist, put } from "../db/Fns";
 import { generateAndSaveToken } from "../utils/Tokens";
 
 export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
@@ -33,16 +32,4 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
     }
 };
 
-const putUser = (user: UsersCreatePostRequestBody): Promise<void> => {
-    const params = { TableName: "Users", Item: user };
-
-    return new Promise((resolve, reject) => {
-        docClient.put(params, err => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
-};
+const putUser = (user: UsersCreatePostRequestBody): Promise<void> => put({ TableName: "Users", Item: user });

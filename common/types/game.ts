@@ -3,6 +3,7 @@ export interface Game {
     name: string;
     creatorUsername: string;
     size: number;
+    lastHistoryItemId?: string;
 }
 
 export type GameStatus =
