@@ -3,6 +3,6 @@ import { UsersEnvironmentGetResponseBody } from "../../environment/get/ResponseB
 export type UsersLoginPostResponseBody = UsersEnvironmentGetResponseBody;
 
 export enum UsersLoginPostErrorMessages {
-    NONEXISTENT_USER = "NONEXISTENT_USER",
-    INCORRECT_PASSWORD = "INCORRECT_PASSWORD",
+    NonexistentUser = "NonexistentUser",
+    IncorrectPassword = "IncorrectPassword",
 }
