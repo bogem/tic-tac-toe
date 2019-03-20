@@ -17,14 +17,25 @@ import {
 } from "grommet";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
+import { toast } from "react-toastify";
 import socketIo from "socket.io-client";
 
 import { Page } from "../components/Page";
 import { getRandomName } from "../utils/GetRandomName";
 import { axios } from "../utils/Api";
-import { toast } from "react-toastify";
 
 export const HomePage = ({ location, history }: RouteComponentProps) => {
+    const [games, setGames] = useState<Game[]>([]);
+
+    useEffect(() => {
+        const socket = socketIo("http://localhost:3002/games/list");
+        socket.on("games_list", (games: Game[]) => setGames(games));
+
+        return () => {
+            socket.close();
+        };
+    }, []);
+
     const closeModal = () => history.push("/home");
 
     return (
@@ -34,7 +45,7 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             <Box margin={{ bottom: "16px" }}>
                 <RoutedAnchor path="#join-game">Spiel beitreten</RoutedAnchor>
             </Box>
-            {location.hash === "#join-game" && <JoinGameModal onClose={closeModal} />}
+            {location.hash === "#join-game" && <JoinGameModal games={games} onClose={closeModal} />}
 
             <RoutedAnchor path="#create-game">Spiel erstellen</RoutedAnchor>
             {location.hash === "#create-game" && <CreateGameModal onClose={closeModal} />}
@@ -53,47 +64,40 @@ interface Game {
     size: number;
 }
 
-const JoinGameModal = ({ onClose }: HomeModalProps) => {
-    const [games, setGames] = useState<Game[]>([]);
+interface JoinGameModalProps extends HomeModalProps {
+    games: Game[];
+}
 
-    useEffect(() => {
-        const socket = socketIo("http://localhost:3002/games/list");
-        socket.on("games_list", (games: Game[]) => setGames(games));
-
-        return () => {
-            socket.close();
-        };
-    }, []);
-
-    return (
-        <Layer onClickOutside={onClose} onEsc={onClose}>
-            <Box pad="medium">
-                {games.length === 0 ? (
-                    <Text>Keine Spiele ...</Text>
-                ) : (
-                    <Table>
-                        <TableHeader>
-                            <TableCell scope="col">Name</TableCell>
-                            <TableCell scope="col">Author</TableCell>
-                            <TableCell scope="col">Größe</TableCell>
-                        </TableHeader>
-                        <TableBody>
-                            {games.map(game => (
-                                <TableRow>
-                                    <TableCell scope="row">{game.name}</TableCell>
-                                    <TableCell>{game.creatorUsername}</TableCell>
-                                    <TableCell>
-                                        {game.size}x{game.size}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                )}
-            </Box>
-        </Layer>
-    );
-};
+const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
+    <Layer onClickOutside={onClose} onEsc={onClose}>
+        <Box pad="medium">
+            {games.length === 0 ? (
+                <Text>Keine Spiele ...</Text>
+            ) : (
+                <Table>
+                    <TableHeader>
+                        <TableCell scope="col">Name</TableCell>
+                        <TableCell scope="col">Author</TableCell>
+                        <TableCell scope="col">Größe</TableCell>
+                    </TableHeader>
+                    <TableBody>
+                        {games.map(game => (
+                            <TableRow>
+                                <TableCell scope="row">
+                                    <RoutedAnchor path={`/game/play/${game.id}`}>{game.name}</RoutedAnchor>
+                                </TableCell>
+                                <TableCell>{game.creatorUsername}</TableCell>
+                                <TableCell>
+                                    {game.size}x{game.size}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+        </Box>
+    </Layer>
+);
 
 const CreateGameModal = ({ onClose }: HomeModalProps) => (
     <Layer onClickOutside={onClose} onEsc={onClose}>
@@ -101,7 +105,7 @@ const CreateGameModal = ({ onClose }: HomeModalProps) => (
             <Formik
                 initialValues={{ name: getRandomName(), size: 3 }}
                 onSubmit={values => {
-                    axios.post("/api/games/create", { values }).then(() => {
+                    axios.post("/api/games/create", values).then(() => {
                         toast("Spiel erfolgreich erstellt");
                     });
                 }}
