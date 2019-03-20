@@ -15,6 +15,7 @@ import { HomePage } from "./pages/Home";
 import { RootDispatch } from "./stores/rootStore/RootTypes";
 import { environmentGetEnvironment } from "./stores/environmentStore/EnvironmentThunks";
 import { RootPage } from "./pages/Root";
+import { GamePlayPage } from "./pages/GamePlay";
 
 const App = () => (
     <BrowserRouter>
@@ -39,6 +40,7 @@ const App = () => (
                     <Route path="/" exact component={RootPage} />
                     <Route path="/login" component={LoginPage} />
                     <Route path="/home" component={HomePage} />
+                    <Route path="/game/play" component={GamePlayPage} />
                 </Switch>
             </Grommet>
         </Provider>
