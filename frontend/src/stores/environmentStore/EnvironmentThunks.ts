@@ -1,17 +1,17 @@
 import { AxiosResponse, AxiosError } from "axios";
 
 import { RootDispatch } from "../rootStore/RootTypes";
-import { UsersEnvironmentGetResponseBody } from "common/types/api/users/environment/get/ResponseBody";
-import { UsersCreatePostRequestBody } from "common/types/api/users/create/post/RequestBody";
+import { UsersEnvironmentGetResponseBody } from "../../../../common/types/api/users/environment/get/ResponseBody";
+import { UsersCreatePostRequestBody } from "../../../../common/types/api/users/create/post/RequestBody";
 import {
     UsersCreatePostResponseBody,
     UsersCreatePostErrorMessages,
-} from "common/types/api/users/create/post/ResponseBody";
+} from "../../../../common/types/api/users/create/post/ResponseBody";
 import {
     UsersLoginPostResponseBody,
     UsersLoginPostErrorMessages,
-} from "common/types/api/users/login/post/ResponseBody";
-import { UsersLoginPostRequestBody } from "common/types/api/users/login/post/RequestBody";
+} from "../../../../common/types/api/users/login/post/ResponseBody";
+import { UsersLoginPostRequestBody } from "../../../../common/types/api/users/login/post/RequestBody";
 import { axios } from "../../utils/Api";
 import { environmentSetEnvironment } from "./EnvironmentActions";
 import { toast } from "react-toastify";
@@ -49,9 +49,9 @@ export const environmentLogin = (username: string, password: string) => (dispatc
             if (error.response) {
                 const { status, data } = error.response;
 
-                if (status === 404 && data === UsersLoginPostErrorMessages.NONEXISTENT_USER) {
+                if (status === 404 && data === UsersLoginPostErrorMessages.NonexistentUser) {
                     toast.error("Dieser Benutzer existiert nicht");
-                } else if (status === 400 && data === UsersLoginPostErrorMessages.INCORRECT_PASSWORD) {
+                } else if (status === 400 && data === UsersLoginPostErrorMessages.IncorrectPassword) {
                     toast.error("Passwort stimmt nicht");
                 }
             }
@@ -78,7 +78,7 @@ export const environmentRegister = (username: string, password: string) => (disp
             if (
                 error.response &&
                 error.response.status === 400 &&
-                error.response.data === UsersCreatePostErrorMessages.ALREADY_EXISTING_USER
+                error.response.data === UsersCreatePostErrorMessages.AlreadyExistingUser
             ) {
                 toast.error("Dieser Benutzer existiert schon");
             }
