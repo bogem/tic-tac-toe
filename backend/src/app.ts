@@ -13,10 +13,15 @@ import socketIo from "socket.io";
 const socketServer = createServer(app);
 const io = socketIo(socketServer);
 
+// Express handlers.
 import { UsersCreatePostHandler } from "./handlers/UsersCreatePost";
 import { UsersEnvironmentGetHandler } from "./handlers/UsersEnvironmentGet";
 import { UsersLoginPostHandler } from "./handlers/UsersLoginPost";
 import { GamesCreatePostHandler } from "./handlers/GamesCreatePost";
+import { GamesJoinPostHandler } from "./handlers/GamesJoinPost";
+
+// Socket.IO namespaces.
+import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
 
 app.use(
     cors({ credentials: true, origin: "http://localhost:3001" }),
@@ -29,19 +34,10 @@ app.post("/api/users/login", UsersLoginPostHandler);
 app.get("/api/users/environment", UsersEnvironmentGetHandler);
 
 app.post("/api/games/create", GamesCreatePostHandler);
+app.post("/api/games/join", GamesJoinPostHandler);
 
 app.listen(3000);
 
-const gamesListNamespace = io.of("/games/list");
-gamesListNamespace.on("connection", () => {
-    console.log("someone connected");
-});
-setInterval(() => {
-    if (Object.keys(gamesListNamespace.connected).length > 0) {
-        const params = {
-            TableName: "Games",
-        };
-    }
-}, 1000);
+runGamesListSocketNamespace(io);
 
 socketServer.listen(3002);
