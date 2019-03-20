@@ -1,7 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 import { docClient } from "./Db";
-import { GameStatus } from "common/types/game";
+import { GameStatus, GameStatusType } from "../../../common/types/game";
 
 export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
     new Promise((resolve, reject) => {
@@ -17,10 +17,7 @@ export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
 export const doesUserExist = (username: string): Promise<boolean> => {
     const params = {
         TableName: "Users",
-        FilterExpression: "#username = :username",
-        ExpressionAttributeNames: {
-            "#username": "username",
-        },
+        FilterExpression: "username = :username",
         ExpressionAttributeValues: {
             ":username": username,
         },
@@ -32,6 +29,29 @@ export const doesUserExist = (username: string): Promise<boolean> => {
                 reject(err);
             } else {
                 resolve(data.Count! > 0);
+            }
+        });
+    });
+};
+
+export const updateGameStatusType = (gameId: string, gameStatusType: GameStatusType) => {
+    const params = {
+        TableName: "Games",
+        Key: {
+            id: gameId,
+        },
+        UpdateExpression: "set statusType = :s",
+        ExpressionAttributeValues: {
+            ":s": gameStatusType,
+        },
+    };
+
+    return new Promise((resolve, reject) => {
+        docClient.update(params, err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
             }
         });
     });
