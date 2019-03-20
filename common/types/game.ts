@@ -1,32 +1,45 @@
 export interface Game {
     id: string;
     name: string;
-    creatorUsername: string;
+    hostUsername: string;
     size: number;
-    lastHistoryItemId?: string;
+    statusType: GameStatusType;
+    guestString?: string;
+}
+
+export enum GameStatusType {
+    WaitingForGuestJoin = "WaitingForGuestJoin",
+    WaitingForMove = "WaitingForMove",
+    GamerMove = "GamerMove",
+    GameEnd = "GameEnd",
+}
+
+export enum Gamer {
+    Host = "Host",
+    Guest = "Guest",
 }
 
 export type GameStatus =
     | {
-          type: "WAITING_FOR_OPPONENT_JOIN";
+          type: GameStatusType.WaitingForGuestJoin;
       }
     | {
-          type: "WAITING_FOR_MOVE";
+          type: GameStatusType.WaitingForMove;
           meta: {
-              gamerUsername: string;
+              gamer: Gamer;
           };
       }
     | {
-          type: "GAMER_MOVE";
+          type: GameStatusType.GamerMove;
           meta: {
-              gamerUsername: string;
+              gamer: Game;
               coords: BoardCoords;
           };
       }
     | {
-          type: "GAME_END";
+          type: GameStatusType.GameEnd;
           meta: {
-              winnerUsername: string;
+              winner: Gamer;
           };
       };
 
