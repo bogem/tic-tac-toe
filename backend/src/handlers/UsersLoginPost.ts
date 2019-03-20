@@ -7,7 +7,7 @@ import {
     UsersLoginPostResponseBody,
     UsersLoginPostErrorMessages,
 } from "../../../common/types/api/users/login/post/ResponseBody";
-import { UsersLoginPostRequestBody } from "common/types/api/users/login/post/RequestBody";
+import { UsersLoginPostRequestBody } from "../../../common/types/api/users/login/post/RequestBody";
 
 export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
     const { username, password } = req.body as UsersLoginPostRequestBody;
@@ -16,14 +16,14 @@ export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
         const userExists = await doesUserExist(username);
         if (!userExists) {
             res.status(404);
-            res.send(UsersLoginPostErrorMessages.NONEXISTENT_USER);
+            res.send(UsersLoginPostErrorMessages.NonexistentUser);
             return;
         }
 
         const passwordCorrect = await checkPasswordCorrectness(username, password);
         if (!passwordCorrect) {
             res.status(400);
-            res.send(UsersLoginPostErrorMessages.INCORRECT_PASSWORD);
+            res.send(UsersLoginPostErrorMessages.IncorrectPassword);
             return;
         }
 

@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 
-import { UsersEnvironmentGetResponseBody } from "common/types/api/users/environment/get/ResponseBody";
+import { UsersEnvironmentGetResponseBody } from "../../../common/types/api/users/environment/get/ResponseBody";
 import { getUsernameWithToken, ERROR_NO_USERNAME_FOUND } from "../utils/Tokens";
 
 export const UsersEnvironmentGetHandler: RequestHandler = async (req, res) => {
