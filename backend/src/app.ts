@@ -24,6 +24,7 @@ import { GamesMakeMovePostHandler } from "./handlers/GamesMakeMovePost";
 
 // Socket.IO namespaces.
 import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
+import { runGamesPlaySocketNamespace } from "./socketNamespaces/GamesPlay";
 
 app.use(
     cors({ credentials: true, origin: "http://localhost:3001" }),
@@ -43,5 +44,6 @@ app.post("/api/games/:gameId/make_move", GamesMakeMovePostHandler);
 app.listen(3000);
 
 runGamesListSocketNamespace(io);
+runGamesPlaySocketNamespace(io);
 
 socketServer.listen(3002);
