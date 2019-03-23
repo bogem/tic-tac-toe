@@ -11,15 +11,15 @@ export const runGamesListSocketNamespace = (io: Server) => {
     let gamesList: Game[] = [];
     const setGamesList = (games: Game[]) => (gamesList = games);
 
+    const emitGamesList = () => gamesListNamespace.emit(GamesListEventName, gamesList);
+
     // Set initial games list.
     scanJustCreatedGames().then(setGamesList);
-
-    const emitGamesList = () => gamesListNamespace.emit(GamesListEventName, gamesList);
 
     // Emit games list on connection.
     gamesListNamespace.on("connection", emitGamesList);
 
-    // Emit games list on new game;
+    // Emit games list on new game.
     newGameEventEmitter.onNewGame(() => {
         scanJustCreatedGames().then(games => {
             setGamesList(games);

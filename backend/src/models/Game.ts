@@ -1,4 +1,4 @@
-import { GameEvent, Game } from "../types/Game";
+import { GameEvent, Game } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
 import { put } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
