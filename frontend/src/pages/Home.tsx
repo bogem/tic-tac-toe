@@ -87,7 +87,7 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
                         {games.map(game => (
                             <TableRow>
                                 <TableCell scope="row">
-                                    <RoutedAnchor path={`/game/${game.id}/play`}>{game.name}</RoutedAnchor>
+                                    <RoutedAnchor path={`/games/${game.id}/play`}>{game.name}</RoutedAnchor>
                                 </TableCell>
                                 <TableCell>{game.hostUsername}</TableCell>
                                 <TableCell>
