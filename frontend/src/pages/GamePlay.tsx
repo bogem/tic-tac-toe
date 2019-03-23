@@ -6,12 +6,12 @@ import styled, { css } from "styled-components";
 
 import { Page } from "../components/Page";
 import { GamesInfoGetResponseBody } from "../../../common/types/api/games/info/get/ResponseBody";
-import { GamesBoardGetResponseBody } from "../../../common/types/api/games/board/get/ResponseBody";
 import { axios, isResponseSuccessBody } from "../utils/Api";
 import { GameEventName, Game } from "../../../common/types/Game";
 import { GameBoard as GameBoardType } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
 import { connect } from "react-redux";
+import socketIo from "socket.io-client";
 
 interface GamePlayPageReduxProps {
     username: string | undefined;
@@ -21,7 +21,7 @@ type GamePlayPageProps = GamePlayPageReduxProps & RouteComponentProps<{ gameId: 
 
 const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
     const [gameInfo, setGameInfo] = useState<Game | undefined>(undefined);
-    const [gameBoard, setGameBoard] = useState<GameBoardType | undefined>(undefined);
+    const [gameBoard] = useState<GameBoardType | undefined>(undefined);
 
     const { gameId } = match.params;
 
@@ -30,8 +30,18 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
             return;
         }
 
+        let socket: SocketIOClient.Socket | undefined;
+
         const fetchGameInfo = (): AxiosPromise<GamesInfoGetResponseBody> => axios.get(`/api/games/${gameId}/info`);
         const joinGame = () => axios.post(`/api/games/${gameId}/join`);
+        const listenToGameSocket = () => {
+            socket = socketIo("http://localhost:3002/games/play");
+
+            socket.emit("game_room_connect", { gameId, username });
+            socket.on("current_game_state", console.log);
+            socket.on("opponent_join", console.log);
+            socket.on("game_move", console.log);
+        };
 
         fetchGameInfo().then(response => {
             const game = response.data;
@@ -41,15 +51,22 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
             if (game.hostUsername !== username && !game.guestUsername) {
                 // If current user is not the host and there is no guest in the game,
                 // then join it.
-                joinGame();
+                joinGame().then(listenToGameSocket);
             } else if (game.hostUsername !== username && game.guestUsername && game.guestUsername !== username) {
                 // Show error that there is a player already
                 alert("You can't join");
             } else if (game.hostUsername === username || game.guestUsername === username) {
                 // If user is alreay a participant of game,
                 // then just fetch game board.
+                listenToGameSocket();
             }
         });
+
+        return () => {
+            if (socket) {
+                socket.close();
+            }
+        };
     }, [gameId, username]);
 
     const isGameBoardEnabled =
