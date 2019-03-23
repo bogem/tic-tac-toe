@@ -1,6 +1,7 @@
 import { GameEvent, Game } from "../types/Game";
 import { docClient } from "../db/Db";
 import { put } from "../db/Fns";
+import { GameEventName } from "../../../common/types/Game";
 
 // GETs
 
@@ -34,6 +35,30 @@ export const isUserInGame = (gameId: string, username: string): Promise<boolean>
                 } else {
                     const game = data.Item as Game | undefined;
                     resolve(Boolean(game && (game.hostUsername === username || game.guestUsername === username)));
+                }
+            }
+        );
+    });
+
+export const scanJustCreatedGames = (): Promise<Game[]> =>
+    new Promise((resolve, reject) => {
+        docClient.scan(
+            {
+                TableName: "Games",
+                FilterExpression: "#le.#n = :n",
+                ExpressionAttributeNames: {
+                    "#le": "lastEvent",
+                    "#n": "name",
+                },
+                ExpressionAttributeValues: {
+                    ":n": GameEventName.GameCreation,
+                },
+            },
+            (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve((data.Items || []) as Game[]);
                 }
             }
         );

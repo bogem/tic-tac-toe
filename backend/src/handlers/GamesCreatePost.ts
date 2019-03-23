@@ -3,10 +3,11 @@ import uuid = require("uuid/v4");
 
 import { GamesCreatePostRequestBody } from "../../../common/types/api/games/create/post/RequestBody";
 import { getUsernameWithToken } from "../models/Token";
-import { GameEventName } from "../types/Game";
+import { GameEventName } from "../../../common/types/Game";
 import { GamesCreatePostResponseBody } from "../../../common/types/api/games/create/post/ResponseBody";
 import { putGame } from "../models/Game";
 import { createAndPutInitialGameBoard } from "../models/GameBoard";
+import { newGameEventEmitter } from "../eventEmitters/NewGame";
 
 export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
     const body = req.body as GamesCreatePostRequestBody;
@@ -36,6 +37,7 @@ export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
         // Create game's board.
         await createAndPutInitialGameBoard(gameId, body.size);
 
+        newGameEventEmitter.emitNewGame();
         res.send(game as GamesCreatePostResponseBody);
     } catch (e) {}
 };

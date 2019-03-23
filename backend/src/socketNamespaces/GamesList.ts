@@ -1,40 +1,32 @@
 import { Server } from "socket.io";
-import { Game, GameEventName } from "../types/Game";
-import { GamesListEventName, GamesListEventData } from "../../../common/types/sockets/GamesList";
-import { docClient } from "../db/Db";
+
+import { Game } from "../../../common/types/Game";
+import { GamesListEventName } from "../../../common/types/sockets/GamesList";
+import { newGameEventEmitter } from "../eventEmitters/NewGame";
+import { scanJustCreatedGames } from "../models/Game";
 
 export const runGamesListSocketNamespace = (io: Server) => {
     const gamesListNamespace = io.of("/games/list");
 
-    setInterval(() => {
-        if (Object.keys(gamesListNamespace.connected).length > 0) {
-            scanJustCreatedGames().then(games => {
-                gamesListNamespace.emit(GamesListEventName, games as GamesListEventData);
-            });
-        }
-    }, 1000);
+    let gamesList: Game[] = [];
+    const setGamesList = (games: Game[]) => (gamesList = games);
 
-    const scanJustCreatedGames = (): Promise<Game[]> => {
-        const params = {
-            TableName: "Games",
-            FilterExpression: "#le.#n = :n",
-            ExpressionAttributeNames: {
-                "#le": "lastEvent",
-                "#n": "name",
-            },
-            ExpressionAttributeValues: {
-                ":n": GameEventName.GameCreation,
-            },
-        };
+    // Set initial games list.
+    scanJustCreatedGames().then(setGamesList);
 
-        return new Promise((resolve, reject) => {
-            docClient.scan(params, (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve((data.Items || []) as Game[]);
-                }
-            });
+    const emitGamesList = () => gamesListNamespace.emit(GamesListEventName, gamesList);
+
+    // Emit games list on connection.
+    gamesListNamespace.on("connection", emitGamesList);
+
+    // Emit games list on new game;
+    newGameEventEmitter.onNewGame(() => {
+        scanJustCreatedGames().then(games => {
+            setGamesList(games);
+
+            if (Object.keys(gamesListNamespace.connected).length > 0) {
+                emitGamesList();
+            }
         });
-    };
+    });
 };
