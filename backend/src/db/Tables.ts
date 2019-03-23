@@ -15,6 +15,11 @@ export const tables = [
         AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
     },
     {
+        TableName: "GamesBoards",
+        KeySchema: [{ AttributeName: "gameId", KeyType: "HASH" }],
+        AttributeDefinitions: [{ AttributeName: "gameId", AttributeType: "S" }],
+    },
+    {
         TableName: "GamesHistories",
         KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
         AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
