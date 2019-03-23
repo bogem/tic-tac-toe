@@ -4,6 +4,7 @@ import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_m
 import { getGameBoard, updateGameBoard } from "../models/GameBoard";
 import { isUserInGame } from "../models/Game";
 import { getUsernameWithToken } from "../models/Token";
+import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
 
 export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -35,6 +36,8 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
         }
 
         gameBoard[coords.row][coords.column] = username;
+
         await updateGameBoard(gameId, gameBoard);
+        gameMoveEventEmitter.emitGameMove({ gameId, username, gameBoard });
     } catch (error) {}
 };

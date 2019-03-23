@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import { GameEventName } from "../../../common/types/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { updateGameGuestUsername, updateGameLastEvent } from "../models/Game";
+import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
 
 export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -27,6 +28,7 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
 
         await updateGameGuestUsername(gameId, username);
         await updateGameLastEvent(gameId, { name: GameEventName.OpponentJoin });
+        opponentJoinEventEmitter.emitOpponentJoin();
 
         res.sendStatus(200);
     } catch (e) {}
