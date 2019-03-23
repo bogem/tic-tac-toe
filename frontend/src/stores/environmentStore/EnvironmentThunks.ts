@@ -9,7 +9,7 @@ import {
 } from "../../../../common/types/api/users/create/post/ResponseBody";
 import {
     UsersLoginPostResponseBody,
-    UsersLoginPostErrorMessages,
+    UsersLoginPostErrorMessage,
 } from "../../../../common/types/api/users/login/post/ResponseBody";
 import { UsersLoginPostRequestBody } from "../../../../common/types/api/users/login/post/RequestBody";
 import { axios } from "../../utils/Api";
@@ -49,9 +49,9 @@ export const environmentLogin = (username: string, password: string) => (dispatc
             if (error.response) {
                 const { status, data } = error.response;
 
-                if (status === 404 && data === UsersLoginPostErrorMessages.NonexistentUser) {
+                if (status === 404 && data === UsersLoginPostErrorMessage.NonexistentUser) {
                     toast.error("Dieser Benutzer existiert nicht");
-                } else if (status === 400 && data === UsersLoginPostErrorMessages.IncorrectPassword) {
+                } else if (status === 400 && data === UsersLoginPostErrorMessage.IncorrectPassword) {
                     toast.error("Passwort stimmt nicht");
                 }
             }

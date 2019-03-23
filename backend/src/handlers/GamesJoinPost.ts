@@ -1,9 +1,8 @@
 import { RequestHandler } from "express";
 
-import { updateGameLastEvent } from "../db/Fns";
-import { GameEventName } from "../../../common/types/game";
-import { getUsernameWithToken } from "../utils/Tokens";
-import { docClient } from "../db/Db";
+import { GameEventName } from "../types/Game";
+import { getUsernameWithToken } from "../models/Token";
+import { updateGameGuestUsername, updateGameLastEvent } from "../models/Game";
 
 export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -31,30 +30,4 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
 
         res.sendStatus(200);
     } catch (e) {}
-};
-
-const updateGameGuestUsername = (gameId: string, guestUsername: string) => {
-    const params = {
-        TableName: "Games",
-        Key: {
-            id: gameId,
-        },
-        UpdateExpression: "set #gu = :gu",
-        ExpressionAttributeNames: {
-            "#gu": "guestUsername",
-        },
-        ExpressionAttributeValues: {
-            ":gu": guestUsername,
-        },
-    };
-
-    return new Promise((resolve, reject) => {
-        docClient.update(params, err => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
 };

@@ -1,11 +1,13 @@
 import { Helmet } from "react-helmet";
 import React from "react";
 import styled from "styled-components";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { BarLoader } from "react-spinners";
-import { RootState } from "../stores/rootStore/RootTypes";
-import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
 import { connect } from "react-redux";
 import { Heading } from "grommet";
+
+import { RootState } from "../stores/rootStore/RootTypes";
+import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
 
 interface PageReduxProps {
     isLoggedIn: boolean | undefined;
@@ -20,11 +22,11 @@ interface PageOwnProps {
     title: string;
 }
 
-type PageProps = PageReduxProps & PageOwnProps;
+type PageProps = PageReduxProps & PageOwnProps & RouteComponentProps;
 
 const UnenhancedPage = (props: PageProps) => {
     if (!props.public && props.isLoggedIn === false) {
-        history.pushState({}, "", "/login");
+        props.history.push("/login");
         return null;
     }
 
@@ -78,6 +80,8 @@ const BlockedLoadingSpinnerContainer = styled.div`
     width: 100%;
 `;
 
-export const Page = connect((rootState: RootState) => ({
-    isLoggedIn: getIsLoggedIn(rootState.environment.environment),
-}))(UnenhancedPage);
+export const Page = withRouter<PageOwnProps & RouteComponentProps>(
+    connect((rootState: RootState) => ({
+        isLoggedIn: getIsLoggedIn(rootState.environment.environment),
+    }))(UnenhancedPage)
+);

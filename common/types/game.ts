@@ -1,3 +1,5 @@
+import { GameBoardCoords } from "./GameBoard";
+
 export interface Game {
     id: string;
     name: string;
@@ -13,14 +15,15 @@ export type GameEvent =
     | {
           name: GameEventName.GamerMove;
           meta: {
-              gamer: Gamer;
+              username: string;
               coords: GameBoardCoords;
           };
       }
     | {
           name: GameEventName.GameEnd;
           meta: {
-              winner: Gamer;
+              winner: string;
+              winningCoords: GameBoardCoords[];
           };
       };
 
@@ -29,18 +32,4 @@ export enum GameEventName {
     OpponentJoin = "OpponentJoin",
     GamerMove = "GamerMove",
     GameEnd = "GameEnd",
-}
-
-export enum Gamer {
-    Host = "Host",
-    Guest = "Guest",
-}
-
-export type GameBoard = GameBoardCellContent[][];
-
-export type GameBoardCellContent = Gamer.Host | Gamer.Guest | "N"; // "N" means nothing
-
-export interface GameBoardCoords {
-    x: number;
-    y: number;
 }

@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { Formik, Field, FieldProps } from "formik";
 import {
     Heading,
@@ -20,16 +21,20 @@ import { RouteComponentProps } from "react-router";
 import { toast } from "react-toastify";
 import socketIo from "socket.io-client";
 
+import { GamesCreatePostResponseBody } from "../../../common/types/api/games/create/post/ResponseBody";
+import { GamesCreatePostRequestBody } from "../../../common/types/api/games/create/post/RequestBody";
+import { GamesListEventName, GamesListEventData } from "../../../common/types/sockets/GamesList";
 import { Page } from "../components/Page";
 import { getRandomName } from "../utils/GetRandomName";
 import { axios } from "../utils/Api";
+import { Game } from "../../../common/types/Game";
 
 export const HomePage = ({ location, history }: RouteComponentProps) => {
     const [games, setGames] = useState<Game[]>([]);
 
     useEffect(() => {
         const socket = socketIo("http://localhost:3002/games/list");
-        socket.on("games_list", (games: Game[]) => setGames(games));
+        socket.on(GamesListEventName, (games: GamesListEventData) => setGames(games));
 
         return () => {
             socket.close();
@@ -48,20 +53,18 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             {location.hash === "#join-game" && <JoinGameModal games={games} onClose={closeModal} />}
 
             <RoutedAnchor path="#create-game">Spiel erstellen</RoutedAnchor>
-            {location.hash === "#create-game" && <CreateGameModal onClose={closeModal} />}
+            {location.hash === "#create-game" && (
+                <CreateGameModal
+                    goToGamePlayPage={(gameId: string) => history.push(`/games/${gameId}/play`)}
+                    onClose={closeModal}
+                />
+            )}
         </Page>
     );
 };
 
 interface HomeModalProps {
     onClose: () => void;
-}
-
-interface Game {
-    id: string;
-    name: string;
-    creatorUsername: string;
-    size: number;
 }
 
 interface JoinGameModalProps extends HomeModalProps {
@@ -84,9 +87,9 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
                         {games.map(game => (
                             <TableRow>
                                 <TableCell scope="row">
-                                    <RoutedAnchor path={`/game/play/${game.id}`}>{game.name}</RoutedAnchor>
+                                    <RoutedAnchor path={`/game/${game.id}/play`}>{game.name}</RoutedAnchor>
                                 </TableCell>
-                                <TableCell>{game.creatorUsername}</TableCell>
+                                <TableCell>{game.hostUsername}</TableCell>
                                 <TableCell>
                                     {game.size}x{game.size}
                                 </TableCell>
@@ -99,15 +102,22 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
     </Layer>
 );
 
-const CreateGameModal = ({ onClose }: HomeModalProps) => (
+interface CreateGameProps extends HomeModalProps {
+    goToGamePlayPage: (gameId: string) => void;
+}
+
+const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
     <Layer onClickOutside={onClose} onEsc={onClose}>
         <Box pad="medium">
             <Formik
-                initialValues={{ name: getRandomName(), size: 3 }}
+                initialValues={{ name: getRandomName(), size: 3 } as GamesCreatePostRequestBody}
                 onSubmit={values => {
-                    axios.post("/api/games/create", values).then(() => {
-                        toast("Spiel erfolgreich erstellt");
-                    });
+                    axios
+                        .post("/api/games/create", values)
+                        .then((response: AxiosResponse<GamesCreatePostResponseBody>) => {
+                            goToGamePlayPage(response.data.id);
+                            toast("Spiel erfolgreich erstellt");
+                        });
                 }}
                 render={({ handleSubmit, values }) => (
                     <Form onSubmit={handleSubmit}>

@@ -19,6 +19,8 @@ import { UsersEnvironmentGetHandler } from "./handlers/UsersEnvironmentGet";
 import { UsersLoginPostHandler } from "./handlers/UsersLoginPost";
 import { GamesCreatePostHandler } from "./handlers/GamesCreatePost";
 import { GamesJoinPostHandler } from "./handlers/GamesJoinPost";
+import { GamesInfoGetHandler } from "./handlers/GamesInfoGet";
+import { GamesMakeMovePostHandler } from "./handlers/GamesMakeMovePost";
 
 // Socket.IO namespaces.
 import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
@@ -34,7 +36,9 @@ app.post("/api/users/login", UsersLoginPostHandler);
 app.get("/api/users/environment", UsersEnvironmentGetHandler);
 
 app.post("/api/games/create", GamesCreatePostHandler);
-app.post("/api/games/join", GamesJoinPostHandler);
+app.get("/api/games/:gameId/info", GamesInfoGetHandler);
+app.post("/api/games/:gameId/join", GamesJoinPostHandler);
+app.post("/api/games/:gameId/make_move", GamesMakeMovePostHandler);
 
 app.listen(3000);
 

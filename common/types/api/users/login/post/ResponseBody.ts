@@ -2,7 +2,7 @@ import { UsersEnvironmentGetResponseBody } from "../../environment/get/ResponseB
 
 export type UsersLoginPostResponseBody = UsersEnvironmentGetResponseBody;
 
-export enum UsersLoginPostErrorMessages {
+export enum UsersLoginPostErrorMessage {
     NonexistentUser = "NonexistentUser",
     IncorrectPassword = "IncorrectPassword",
 }

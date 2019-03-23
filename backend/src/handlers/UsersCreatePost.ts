@@ -3,10 +3,10 @@ import { RequestHandler } from "express";
 import { UsersCreatePostRequestBody } from "../../../common/types/api/users/create/post/RequestBody";
 import {
     UsersCreatePostResponseBody,
-    UsersCreatePostErrorMessages,
+    UsersCreatePostErrorMessage,
 } from "../../../common/types/api/users/create/post/ResponseBody";
-import { doesUserExist, put } from "../db/Fns";
-import { generateAndSaveToken } from "../utils/Tokens";
+import { generateAndSaveToken } from "../models/Token";
+import { putUser, doesUserExist } from "../models/User";
 
 export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
     const body = req.body as UsersCreatePostRequestBody;
@@ -15,7 +15,7 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
     try {
         if (await doesUserExist(username)) {
             res.status(400);
-            res.send(UsersCreatePostErrorMessages.AlreadyExistingUser);
+            res.send(UsersCreatePostErrorMessage.AlreadyExistingUser);
             return;
         }
 
@@ -31,5 +31,3 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
         res.sendStatus(500);
     }
 };
-
-const putUser = (user: UsersCreatePostRequestBody): Promise<void> => put({ TableName: "Users", Item: user });

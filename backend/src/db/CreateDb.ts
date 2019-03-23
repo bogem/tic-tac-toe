@@ -1,5 +1,3 @@
-import { AWSError } from "aws-sdk";
-
 import { db } from "./Db";
 import { tables } from "./Tables";
 
@@ -12,7 +10,7 @@ tables.forEach(table => {
                 WriteCapacityUnits: 1,
             },
         },
-        (err: AWSError) => {
+        err => {
             if (err) {
                 console.error(`Unable to create table "${table.TableName}": ${JSON.stringify(err)}`);
             } else {

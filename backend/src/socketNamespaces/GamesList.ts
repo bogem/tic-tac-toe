@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import { Game, GameEventName } from "../../../common/types/game";
-import { GamesListEventName, GamesListEventMessageData } from "../../../common/types/sockets/GamesList";
+import { Game, GameEventName } from "../types/Game";
+import { GamesListEventName, GamesListEventData } from "../../../common/types/sockets/GamesList";
 import { docClient } from "../db/Db";
 
 export const runGamesListSocketNamespace = (io: Server) => {
@@ -9,7 +9,7 @@ export const runGamesListSocketNamespace = (io: Server) => {
     setInterval(() => {
         if (Object.keys(gamesListNamespace.connected).length > 0) {
             scanJustCreatedGames().then(games => {
-                gamesListNamespace.emit(GamesListEventName, games as GamesListEventMessageData);
+                gamesListNamespace.emit(GamesListEventName, games as GamesListEventData);
             });
         }
     }, 1000);

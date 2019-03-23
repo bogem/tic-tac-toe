@@ -1,72 +1,22 @@
+import { AWSError } from "aws-sdk";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 import { docClient } from "./Db";
-import { GameEvent } from "../../../common/types/game";
+
+const onlyErrDocClientCallback = (resolve: () => void, reject: (reason: any) => void) => (err: AWSError) => {
+    if (err) {
+        reject(err);
+    } else {
+        resolve();
+    }
+};
 
 export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
     new Promise((resolve, reject) => {
-        docClient.put(params, err => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
+        docClient.put(params, onlyErrDocClientCallback(resolve, reject));
     });
 
-export const doesUserExist = (username: string): Promise<boolean> => {
-    const params = {
-        TableName: "Users",
-        FilterExpression: "#u = :u",
-        ExpressionAttributeNames: {
-            "#u": "username",
-        },
-        ExpressionAttributeValues: {
-            ":u": username,
-        },
-    };
-
-    return new Promise((resolve, reject) => {
-        docClient.scan(params, (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data.Count! > 0);
-            }
-        });
+export const update = (params: DocumentClient.UpdateItemInput): Promise<void> =>
+    new Promise((resolve, reject) => {
+        docClient.update(params, onlyErrDocClientCallback(resolve, reject));
     });
-};
-
-export const updateGameLastEvent = (gameId: string, event: GameEvent) => {
-    const params = {
-        TableName: "Games",
-        Key: {
-            id: gameId,
-        },
-        UpdateExpression: "set #e = :e",
-        ExpressionAttributeNames: {
-            "#e": "event",
-        },
-        ExpressionAttributeValues: {
-            ":e": event,
-        },
-    };
-
-    return new Promise((resolve, reject) => {
-        docClient.update(params, err => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
-};
-
-interface GamesHistoriesItem {
-    id: string;
-    gameId: string;
-    event: GameEvent;
-}
-
-export const putGamesHistoriesItem = (item: GamesHistoriesItem) => put({ TableName: "GamesHistories", Item: item });

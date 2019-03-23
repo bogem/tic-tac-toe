@@ -2,6 +2,6 @@ import { UsersEnvironmentGetResponseBody } from "../../environment/get/ResponseB
 
 export type UsersCreatePostResponseBody = UsersEnvironmentGetResponseBody;
 
-export enum UsersCreatePostErrorMessages {
+export enum UsersCreatePostErrorMessage {
     AlreadyExistingUser = "AlreadyExistingUser",
 }

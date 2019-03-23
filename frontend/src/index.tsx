@@ -40,7 +40,7 @@ const App = () => (
                     <Route path="/" exact component={RootPage} />
                     <Route path="/login" component={LoginPage} />
                     <Route path="/home" component={HomePage} />
-                    <Route path="/game/play" component={GamePlayPage} />
+                    <Route path="/games/:gameId/play" component={GamePlayPage} />
                 </Switch>
             </Grommet>
         </Provider>
