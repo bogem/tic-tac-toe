@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 
-import { GameEventName } from "../types/Game";
+import { GameEventName } from "../../../common/types/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { updateGameGuestUsername, updateGameLastEvent } from "../models/Game";
 

@@ -19,7 +19,11 @@ const UnenhancedRootPage = ({ isLoggedIn, history }: RootPageProps) => {
         history.push("/login");
     }
 
-    return <Page isBlockedLoading={isLoggedIn === undefined} />;
+    return (
+        <Page isBlockedLoading={isLoggedIn === undefined} title="Laden...">
+            null
+        </Page>
+    );
 };
 
 export const RootPage = connect((rootState: RootState) => ({

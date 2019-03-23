@@ -32,10 +32,6 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
 
         const fetchGameInfo = (): AxiosPromise<GamesInfoGetResponseBody> => axios.get(`/api/games/${gameId}/info`);
         const joinGame = () => axios.post(`/api/games/${gameId}/join`);
-        const fetchGameBoard = () =>
-            axios
-                .get<GamesBoardGetResponseBody>(`/api/games/${gameId}/board`)
-                .then(response => setGameBoard(response.data));
 
         fetchGameInfo().then(response => {
             const game = response.data;
@@ -45,14 +41,13 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
             if (game.hostUsername !== username && !game.guestUsername) {
                 // If current user is not the host and there is no guest in the game,
                 // then join it.
-                joinGame().then(fetchGameBoard);
+                joinGame();
             } else if (game.hostUsername !== username && game.guestUsername && game.guestUsername !== username) {
                 // Show error that there is a player already
                 alert("You can't join");
             } else if (game.hostUsername === username || game.guestUsername === username) {
                 // If user is alreay a participant of game,
                 // then just fetch game board.
-                fetchGameBoard();
             }
         });
     }, [gameId, username]);
