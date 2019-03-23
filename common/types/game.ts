@@ -3,13 +3,30 @@ export interface Game {
     name: string;
     hostUsername: string;
     size: number;
-    statusType: GameStatusType;
-    guestString?: string;
+    lastEvent: GameEvent;
+    guestUsername?: string;
 }
 
-export enum GameStatusType {
-    WaitingForGuestJoin = "WaitingForGuestJoin",
-    WaitingForMove = "WaitingForMove",
+export type GameEvent =
+    | { name: GameEventName.GameCreation }
+    | { name: GameEventName.OpponentJoin }
+    | {
+          name: GameEventName.GamerMove;
+          meta: {
+              gamer: Gamer;
+              coords: GameBoardCoords;
+          };
+      }
+    | {
+          name: GameEventName.GameEnd;
+          meta: {
+              winner: Gamer;
+          };
+      };
+
+export enum GameEventName {
+    GameCreation = "GameCreation",
+    OpponentJoin = "OpponentJoin",
     GamerMove = "GamerMove",
     GameEnd = "GameEnd",
 }
@@ -19,31 +36,11 @@ export enum Gamer {
     Guest = "Guest",
 }
 
-export type GameStatus =
-    | {
-          type: GameStatusType.WaitingForGuestJoin;
-      }
-    | {
-          type: GameStatusType.WaitingForMove;
-          meta: {
-              gamer: Gamer;
-          };
-      }
-    | {
-          type: GameStatusType.GamerMove;
-          meta: {
-              gamer: Game;
-              coords: BoardCoords;
-          };
-      }
-    | {
-          type: GameStatusType.GameEnd;
-          meta: {
-              winner: Gamer;
-          };
-      };
+export type GameBoard = GameBoardCellContent[][];
 
-export interface BoardCoords {
+export type GameBoardCellContent = Gamer.Host | Gamer.Guest | "N"; // "N" means nothing
+
+export interface GameBoardCoords {
     x: number;
     y: number;
 }
