@@ -8,8 +8,9 @@
         "frontend:dev": "rm -rf frontend/dist/* && webpack --config ./frontend/webpack.dev.js",
         "frontend:prod": "rm -rf frontend/dist/* && webpack --config ./frontend/webpack.prod.js",
         "frontend:run": "rm -rf frontend/dist/* && webpack-dev-server --config ./frontend/webpack.dev.js --open",
-        "backend:build": "rm -rf backend/dist/* && tsc -p ./backend/tsconfig.json",
-        "backend:run": "npm run-script backend:build && nodemon ./backend/dist/backend/src/app.js"
+        "backend:dev": "rm -rf backend/dist/* && tsc -p ./backend/tsconfig.json",
+        "backend:prod": "npm run-script backend:dev && find backend/dist -name *.js | xargs -I '%' npx terser -m toplevel -c -o '%' -- '%' ",
+        "backend:run": "npm run-script backend:dev && nodemon ./backend/dist/backend/src/app.js"
     },
     "dependencies": {
         "@babel/core": "7.4.0",
@@ -69,6 +70,7 @@
         "socket.io": "2.2.0",
         "style-loader": "0.23.1",
         "styled-components": "4.1.3",
+        "terser": "^3.17.0",
         "tslint": "5.14.0",
         "tslint-config-airbnb": "5.11.1",
         "tslint-react-hooks": "2.0.0",
