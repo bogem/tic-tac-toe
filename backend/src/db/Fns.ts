@@ -1,7 +1,7 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 import { docClient } from "./Db";
-import { GameStatus, GameStatusType } from "../../../common/types/game";
+import { GameEvent } from "../../../common/types/game";
 
 export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
     new Promise((resolve, reject) => {
@@ -17,9 +17,12 @@ export const put = (params: DocumentClient.PutItemInput): Promise<void> =>
 export const doesUserExist = (username: string): Promise<boolean> => {
     const params = {
         TableName: "Users",
-        FilterExpression: "username = :username",
+        FilterExpression: "#u = :u",
+        ExpressionAttributeNames: {
+            "#u": "username",
+        },
         ExpressionAttributeValues: {
-            ":username": username,
+            ":u": username,
         },
     };
 
@@ -34,15 +37,18 @@ export const doesUserExist = (username: string): Promise<boolean> => {
     });
 };
 
-export const updateGameStatusType = (gameId: string, gameStatusType: GameStatusType) => {
+export const updateGameLastEvent = (gameId: string, event: GameEvent) => {
     const params = {
         TableName: "Games",
         Key: {
             id: gameId,
         },
-        UpdateExpression: "set statusType = :s",
+        UpdateExpression: "set #e = :e",
+        ExpressionAttributeNames: {
+            "#e": "event",
+        },
         ExpressionAttributeValues: {
-            ":s": gameStatusType,
+            ":e": event,
         },
     };
 
@@ -60,7 +66,7 @@ export const updateGameStatusType = (gameId: string, gameStatusType: GameStatusT
 interface GamesHistoriesItem {
     id: string;
     gameId: string;
-    status: GameStatus;
+    event: GameEvent;
 }
 
 export const putGamesHistoriesItem = (item: GamesHistoriesItem) => put({ TableName: "GamesHistories", Item: item });

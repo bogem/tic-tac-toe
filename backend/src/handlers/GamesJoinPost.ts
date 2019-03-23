@@ -1,9 +1,7 @@
 import { RequestHandler } from "express";
-import queryString from "query-string";
-import uuid = require("uuid");
 
-import { putGamesHistoriesItem, updateGameStatusType } from "../db/Fns";
-import { GameStatusType, Gamer } from "../../../common/types/game";
+import { updateGameLastEvent } from "../db/Fns";
+import { GameEventName } from "../../../common/types/game";
 import { getUsernameWithToken } from "../utils/Tokens";
 import { docClient } from "../db/Db";
 
@@ -14,23 +12,24 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
         return;
     }
 
-    const { gameId } = queryString.parse(req.originalUrl) as { gameId: string };
-    const statusType = GameStatusType.WaitingForMove;
+    const { gameId } = req.params as { gameId: string };
 
     try {
         const username = await getUsernameWithToken(token);
 
-        await putGamesHistoriesItem({
-            gameId,
-            id: uuid(),
-            status: {
-                type: statusType,
-                meta: { gamer: Gamer.Host },
-            },
-        });
+        // await putGamesHistoriesItem({
+        //     gameId,
+        //     id: uuid(),
+        //     status: {
+        //         type: statusType,
+        //         meta: { gamer: Gamer.Host },
+        //     },
+        // });
 
         await updateGameGuestUsername(gameId, username);
-        await updateGameStatusType(gameId, statusType);
+        await updateGameLastEvent(gameId, { name: GameEventName.OpponentJoin });
+
+        res.sendStatus(200);
     } catch (e) {}
 };
 
@@ -40,9 +39,12 @@ const updateGameGuestUsername = (gameId: string, guestUsername: string) => {
         Key: {
             id: gameId,
         },
-        UpdateExpression: "set guestUsername = :o",
+        UpdateExpression: "set #gu = :gu",
+        ExpressionAttributeNames: {
+            "#gu": "guestUsername",
+        },
         ExpressionAttributeValues: {
-            ":o": guestUsername,
+            ":gu": guestUsername,
         },
     };
 

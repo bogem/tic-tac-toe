@@ -1,25 +1,29 @@
 import { Server } from "socket.io";
-import { Game, GameStatusType } from "../../../common/types/game";
+import { Game, GameEventName } from "../../../common/types/game";
+import { GamesListEventName, GamesListEventMessageData } from "../../../common/types/sockets/GamesList";
 import { docClient } from "../db/Db";
 
 export const runGamesListSocketNamespace = (io: Server) => {
     const gamesListNamespace = io.of("/games/list");
 
     setInterval(() => {
-        console.log(Object.keys(gamesListNamespace.connected).length);
         if (Object.keys(gamesListNamespace.connected).length > 0) {
-            scanGamesWaitingForGuestJoin().then(games => {
-                gamesListNamespace.emit("games_list", games);
+            scanJustCreatedGames().then(games => {
+                gamesListNamespace.emit(GamesListEventName, games as GamesListEventMessageData);
             });
         }
     }, 1000);
 
-    const scanGamesWaitingForGuestJoin = (): Promise<Game[]> => {
+    const scanJustCreatedGames = (): Promise<Game[]> => {
         const params = {
             TableName: "Games",
-            FilterExpression: "statusType = :statusType",
+            FilterExpression: "#le.#n = :n",
+            ExpressionAttributeNames: {
+                "#le": "lastEvent",
+                "#n": "name",
+            },
             ExpressionAttributeValues: {
-                ":statusType": GameStatusType.WaitingForGuestJoin,
+                ":n": GameEventName.GameCreation,
             },
         };
 
