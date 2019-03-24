@@ -4,10 +4,10 @@ import { toast } from "react-toastify";
 export type ApiData<GetResponseSuccessBody> = "Not Asked" | "Loading" | AxiosError | GetResponseSuccessBody;
 
 export const isResponseSuccessBody = <T>(apiData: ApiData<T>): apiData is T =>
-    apiData !== "Not Asked" && apiData !== "Loading" && !isResponseError(apiData);
+    typeof apiData !== "string" && !isResponseError(apiData);
 
 export const isResponseError = <T>(apiData: ApiData<T>): apiData is AxiosError =>
-    apiData !== "Not Asked" && apiData !== "Loading" && "config" in apiData;
+    typeof apiData !== "string" && "config" in apiData;
 
 export const axios = originalAxios.create({
     baseURL: "http://localhost:3000/",
