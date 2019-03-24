@@ -1,7 +1,7 @@
 import { AxiosPromise } from "axios";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { Text } from "grommet";
+import { Text, RoutedAnchor, Box } from "grommet";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import socketIo from "socket.io-client";
@@ -10,7 +10,7 @@ import { Page } from "../components/Page";
 import { GamesInfoGetResponseBody } from "../../../common/types/api/games/info/get/ResponseBody";
 import { axios, isResponseSuccessBody } from "../utils/Api";
 import { GameEventName, Game } from "../../../common/types/Game";
-import { GameBoard as GameBoardType } from "../../../common/types/GameBoard";
+import { GameBoard as GameBoardType, GameBoardCoords } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
 import { CurrentGameStateEventData, GamePlayEventName } from "../../../common/types/sockets/GamesPlay";
 import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
@@ -43,7 +43,6 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
                 setGameInfo(data.game);
                 setGameBoard(data.gameBoard);
             });
-            socket.on(GamePlayEventName.GameMove, (data: any) => console.log(data));
         };
 
         fetchGameInfo().then(response => {
@@ -92,6 +91,11 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
         ((gameInfo.lastEvent.name === GameEventName.OpponentJoin && gameInfo.hostUsername === username) ||
             (gameInfo.lastEvent.name === GameEventName.GamerMove && gameInfo.lastEvent.meta.username !== username));
 
+    const isGameEnd =
+        gameInfo &&
+        (gameInfo.lastEvent.name === GameEventName.GameEndWithDraw ||
+            gameInfo.lastEvent.name === GameEventName.GameEndWithWinner);
+
     const opponentUsername =
         gameInfo && (gameInfo.hostUsername === username ? gameInfo.guestUsername : gameInfo.hostUsername);
 
@@ -99,25 +103,47 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
         <Page isLoading={username === undefined} title="Spielen">
             {gameInfo && (
                 <>
-                    {opponentUsername && (
-                        <Text margin={{ bottom: "16px" }} textAlign="center">
-                            Das Spiel <b>{gameInfo.name}</b> gegen <b>{opponentUsername}</b>
+                    <Box margin={{ bottom: "16px" }}>
+                        <Text textAlign="center" weight="bold">
+                            {gameInfo.name}
                         </Text>
-                    )}
+
+                        {opponentUsername && (
+                            <Text textAlign="center">
+                                gegen <b>{opponentUsername}</b>
+                            </Text>
+                        )}
+                    </Box>
+
                     <Text margin={{ bottom: "24px" }} size="xlarge" textAlign="center" weight="bold">
                         {gameTitle(gameInfo, username!, opponentUsername!)}
                     </Text>
                 </>
             )}
+
             {gameBoard && gameInfo && gameInfo.guestUsername && (
-                <GameBoard
-                    gameBoard={gameBoard}
-                    guestUsername={gameInfo.guestUsername}
-                    disabled={!isGameBoardEnabled}
-                    hostUsername={gameInfo.hostUsername}
-                    onCellClick={makeMove}
-                />
+                <Box margin={{ bottom: "24px" }}>
+                    <GameBoard
+                        gameBoard={gameBoard}
+                        guestUsername={gameInfo.guestUsername}
+                        disabled={!isGameBoardEnabled}
+                        hostUsername={gameInfo.hostUsername}
+                        isUserWon={
+                            gameInfo.lastEvent.name === GameEventName.GameEndWithWinner &&
+                            gameInfo.lastEvent.meta.winnerUsername === username!
+                        }
+                        onCellClick={makeMove}
+                        username={username!}
+                        winCoords={
+                            (gameInfo.lastEvent.name === GameEventName.GameEndWithWinner &&
+                                gameInfo.lastEvent.meta.winCoords) ||
+                            undefined
+                        }
+                    />
+                </Box>
             )}
+
+            {isGameEnd && <RoutedAnchor path="/home">Zurück zu Home</RoutedAnchor>}
         </Page>
     );
 };
@@ -135,14 +161,10 @@ const gameTitle = (game: Game, username: string, opponentUsername: string) => {
             return "Warte auf Gast ⌛️";
 
         case GameEventName.OpponentJoin:
-            return game.hostUsername === username
-                ? "Dein Zug 👊"
-                : `Warte bis ${opponentUsername} seinen Zug macht ⌛️`;
+            return game.hostUsername === username ? "Dein Zug 👊" : `${opponentUsername}'s Zug ⌛️`;
 
         case GameEventName.GamerMove:
-            return game.lastEvent.meta.username === username
-                ? `Warte bis ${opponentUsername} seinen Zug ⌛️`
-                : "Dein Zug 👊";
+            return game.lastEvent.meta.username === username ? `${opponentUsername}'s Zug ⌛️` : "Dein Zug 👊";
 
         case GameEventName.GameEndWithWinner:
             return game.lastEvent.meta.winnerUsername === username ? "Du hast gewonnen 🎉" : "Du hast verloren 👎";
@@ -157,44 +179,92 @@ interface GameBoardProps {
     gameBoard: GameBoardType;
     guestUsername: string;
     hostUsername: string;
+    isUserWon?: boolean;
     onCellClick: (row: number, column: number) => void;
+    username: string;
+    winCoords?: GameBoardCoords[];
 }
 
 /* TODO: after TS 3.4 release use "as const" in GameBoardCell children. */
-const GameBoard = (props: GameBoardProps) => (
-    <table>
-        <tbody>
-            {props.gameBoard.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                    {row.map((column, columnIndex) => (
-                        <GameBoardCell
-                            disabled={props.disabled}
-                            key={columnIndex}
-                            onClick={() => props.onCellClick(rowIndex, columnIndex)}
-                        >
-                            {column === props.hostUsername
-                                ? ("X" as "X")
-                                : column === props.guestUsername
-                                ? ("O" as "O")
-                                : ("" as "")}
-                        </GameBoardCell>
-                    ))}
-                </tr>
-            ))}
-        </tbody>
-    </table>
-);
+
+const GameBoard = (props: GameBoardProps) => {
+    const childrenOnHover =
+        props.username === props.hostUsername
+            ? ("X" as "X")
+            : props.username === props.guestUsername
+            ? ("O" as "O")
+            : undefined;
+
+    return (
+        <table>
+            <tbody>
+                {props.gameBoard.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                        {row.map((column, columnIndex) => {
+                            // Is cell a part of win coords?
+                            const isWinCell =
+                                props.winCoords &&
+                                props.winCoords.some(
+                                    winCoord => winCoord.row === rowIndex && winCoord.column === columnIndex
+                                );
+
+                            return (
+                                <GameBoardCell
+                                    childrenOnHover={childrenOnHover}
+                                    color={isWinCell ? (props.isUserWon ? "#333" : "#ff4040") : undefined}
+                                    disabled={props.disabled}
+                                    key={columnIndex}
+                                    onClick={() => props.onCellClick(rowIndex, columnIndex)}
+                                >
+                                    {column === props.hostUsername
+                                        ? ("X" as "X")
+                                        : column === props.guestUsername
+                                        ? ("O" as "O")
+                                        : null}
+                                </GameBoardCell>
+                            );
+                        })}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
 
 interface GameBoardCellProps {
-    children: "X" | "O" | "";
+    // childrenOnHover is shown when the cell hovered.
+    childrenOnHover?: "X" | "O";
+
+    // className's value should only come from styled-components.
+    // You must not use this prop.
+    className?: string;
+
+    children: "X" | "O" | null;
+    color?: string;
     disabled?: boolean;
     onClick: () => void;
 }
 
-const GameBoardCell = styled.td<GameBoardCellProps>`
+const UnstyledGameBoardCell = ({ childrenOnHover, children, className, disabled, onClick }: GameBoardCellProps) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <td
+            className={className}
+            onMouseOver={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={onClick}
+            style={isHovered && !children && !disabled ? { color: "rgba(79, 79, 79, 0.5)" } : undefined}
+        >
+            {children || (isHovered && !disabled && childrenOnHover) || null}
+        </td>
+    );
+};
+
+const GameBoardCell = styled(UnstyledGameBoardCell)`
     border: 1px solid ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
-    color: ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
-    cursor: ${props => (props.disabled || props.children !== "" ? "not-allowed" : "pointer")};
+    color: ${props => props.color || (props.disabled ? "#dadada" : "#4f4f4f")};
+    cursor: ${props => (props.disabled || props.children !== null ? "not-allowed" : "pointer")};
     font-size: 36px;
     font-weight: bold;
     text-align: center;

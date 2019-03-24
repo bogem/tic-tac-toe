@@ -18,7 +18,6 @@ import {
 } from "grommet";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { toast } from "react-toastify";
 import socketIo from "socket.io-client";
 
 import { GamesCreatePostResponseBody } from "../../../common/types/api/games/create/post/ResponseBody";
@@ -124,7 +123,6 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
                         .post("/api/games/create", values)
                         .then((response: AxiosResponse<GamesCreatePostResponseBody>) => {
                             goToGamePlayPage(response.data);
-                            toast("Spiel erfolgreich erstellt");
                         });
                 }}
                 render={({ handleSubmit, values }) => (
