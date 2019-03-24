@@ -20,8 +20,8 @@ const UnenhancedRootPage = ({ isLoggedIn, history }: RootPageProps) => {
     }
 
     return (
-        <Page isBlockedLoading={isLoggedIn === undefined} title="Laden...">
-            null
+        <Page isLoading={isLoggedIn === undefined} title="Laden...">
+            {null}
         </Page>
     );
 };

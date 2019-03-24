@@ -16,7 +16,6 @@ interface PageReduxProps {
 interface PageOwnProps {
     error?: string;
     children: React.ReactNode;
-    isBlockedLoading?: boolean;
     isLoading?: boolean;
     public?: boolean;
     title: string;
@@ -30,12 +29,12 @@ const UnenhancedPage = (props: PageProps) => {
         return null;
     }
 
-    if (props.isBlockedLoading) {
+    if (props.isLoading) {
         return (
-            <BlockedLoadingSpinnerContainer>
+            <BarLoaderContainer>
                 <Heading level="2">Laden...</Heading>
-                <BarLoader color="#00739d" height={11} loading={props.isBlockedLoading || false} width={200} />
-            </BlockedLoadingSpinnerContainer>
+                <BarLoader color="#00739d" height={11} loading={props.isLoading || false} width={200} />
+            </BarLoaderContainer>
         );
     }
 
@@ -44,10 +43,6 @@ const UnenhancedPage = (props: PageProps) => {
             <Helmet title={props.title} />
 
             {props.children}
-
-            <LoadingSpinnerContainer>
-                <BarLoader color="#00739d" height={5} loading={props.isLoading || false} width={70} />
-            </LoadingSpinnerContainer>
         </PageContainer>
     );
 };
@@ -60,13 +55,7 @@ const PageContainer = styled.main`
     justify-content: center;
 `;
 
-const LoadingSpinnerContainer = styled.div`
-    bottom: 32px;
-    position: fixed;
-    right: 40px;
-`;
-
-const BlockedLoadingSpinnerContainer = styled.div`
+const BarLoaderContainer = styled.div`
     align-items: center;
     background: #fff;
     display: flex;

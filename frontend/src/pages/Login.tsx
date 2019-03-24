@@ -19,12 +19,6 @@ interface LoginPageReduxProps {
 
 type LoginPageProps = LoginPageReduxProps & RouteComponentProps;
 
-type LoginPageValues = {
-    username: string;
-    password: string;
-    isRegistering: boolean;
-};
-
 const UnenhancedLoginPage = (props: LoginPageProps) => {
     useEffect(() => {
         if (props.isLoggedIn) {
@@ -34,7 +28,7 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
 
     return (
         <Formik
-            initialValues={{ username: "", password: "", isRegistering: true } as LoginPageValues}
+            initialValues={{ username: "", password: "", isRegistering: false }}
             onSubmit={values => {
                 const submitFunc = values.isRegistering ? props.register : props.login;
                 submitFunc(values.username, values.password);
@@ -52,7 +46,7 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
                 const title = values.isRegistering ? "Registrieren" : "Einloggen";
 
                 return (
-                    <Page isBlockedLoading={props.isLoading} public={true} title={title}>
+                    <Page isLoading={props.isLoading} public={true} title={title}>
                         <Heading level="1">Tic-Tac-Toe</Heading>
 
                         <Form onSubmit={handleSubmit}>
