@@ -21,7 +21,7 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
             updateGameGuestUsername(gameId, username),
             updateGameLastEvent(gameId, { name: GameEventName.OpponentJoin }),
         ]);
-        opponentJoinEventEmitter.emitOpponentJoin({ gameId, username });
+        opponentJoinEventEmitter.emitOpponentJoin(gameId);
 
         res.sendStatus(200);
     } catch (e) {}

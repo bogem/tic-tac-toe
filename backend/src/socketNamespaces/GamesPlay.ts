@@ -10,6 +10,7 @@ import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
 import { GameId } from "../../../common/types/Game";
 import { getGame } from "../models/Game";
 import { getGameBoard } from "../models/GameBoard";
+import { gameEndEventEmitter } from "../eventEmitters/GameEnd";
 
 export const runGamesPlaySocketNamespace = (io: Server) => {
     const namespace = io.of("/games/play");
@@ -23,18 +24,25 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
         });
     };
 
-    const subscribeToGameMove = () => {
-        gameMoveEventEmitter.onGameMove(data => {
-            console.log("game_move", data);
-            namespace.to(data.gameId).emit(GamePlayEventName.GameMove, data);
-            emitCurrentGameState(data.gameId);
+    const subscribeToOpponentJoin = () => {
+        opponentJoinEventEmitter.onOpponentJoin(gameId => {
+            console.log("opponent_join", gameId);
+            emitCurrentGameState(gameId);
         });
     };
 
-    const subscribeToOpponentJoin = () => {
-        opponentJoinEventEmitter.onOpponentJoin(data => {
-            console.log("opponent_join", data);
-            emitCurrentGameState(data.gameId);
+    const subscribeToGameMove = () => {
+        gameMoveEventEmitter.onGameMove(gameId => {
+            console.log("game_move", gameId);
+            namespace.to(gameId).emit(GamePlayEventName.GameMove, gameId);
+            emitCurrentGameState(gameId);
+        });
+    };
+
+    const subscribeToGameEnd = () => {
+        gameEndEventEmitter.onGameEnd(gameId => {
+            console.log("game_end", gameId);
+            emitCurrentGameState(gameId);
         });
     };
 
@@ -55,7 +63,9 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
         });
     };
 
-    subscribeToGameMove();
     subscribeToOpponentJoin();
+    subscribeToGameMove();
+    subscribeToGameEnd();
+
     runNamespace();
 };

@@ -1,22 +1,15 @@
 import { EventEmitter } from "events";
 
-import { GameBoard } from "../../../common/types/GameBoard";
 import { GameId } from "../../../common/types/Game";
 
-const GAME_MOVE_EVENT_NAME = "game_move";
-
-interface GameMoveData {
-    gameId: GameId;
-    username: string;
-    gameBoard: GameBoard;
-}
+const GAME_MOVE_EVENT_NAME = "GameMove";
 
 class GameMoveEventEmitter extends EventEmitter {
-    emitGameMove = (data: GameMoveData) => {
-        this.emit(GAME_MOVE_EVENT_NAME, data);
+    emitGameMove = (gameId: GameId) => {
+        this.emit(GAME_MOVE_EVENT_NAME, gameId);
     };
 
-    onGameMove = (listener: (data: GameMoveData) => void) => {
+    onGameMove = (listener: (gameId: GameId) => void) => {
         this.on(GAME_MOVE_EVENT_NAME, listener);
     };
 }

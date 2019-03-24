@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 
-const NEW_GAME_EVENT_NAME = "new_game";
+const NEW_GAME_EVENT_NAME = "NewGame";
 
 class NewGameEventEmitter extends EventEmitter {
     emitNewGame = () => {

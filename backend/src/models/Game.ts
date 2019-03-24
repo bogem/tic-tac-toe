@@ -2,6 +2,7 @@ import { GameEvent, Game, GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
 import { put, update } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
+import { sortBy } from "lodash";
 
 // GETs
 
@@ -58,7 +59,11 @@ export const scanJustCreatedGames = (): Promise<Game[]> =>
                 if (err) {
                     reject(err);
                 } else {
-                    resolve((data.Items || []) as Game[]);
+                    if (data.Items) {
+                        resolve(sortBy(data.Items, "name") as Game[]);
+                    } else {
+                        resolve([]);
+                    }
                 }
             }
         );

@@ -73,7 +73,7 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
     }, [gameId, username]);
 
     const makeMove = (row: number, column: number) => {
-        if (!gameBoard || gameBoard[row][column] !== "") {
+        if (!gameBoard || gameBoard[row][column] !== null) {
             return;
         }
 
@@ -92,12 +92,22 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
         ((gameInfo.lastEvent.name === GameEventName.OpponentJoin && gameInfo.hostUsername === username) ||
             (gameInfo.lastEvent.name === GameEventName.GamerMove && gameInfo.lastEvent.meta.username !== username));
 
+    const opponentUsername =
+        gameInfo && (gameInfo.hostUsername === username ? gameInfo.guestUsername : gameInfo.hostUsername);
+
     return (
         <Page isLoading={username === undefined} title="Spielen">
             {gameInfo && (
-                <Text margin={{ bottom: "24px" }}>
-                    <b>Aktuelle Stand:</b> {gameInfo.lastEvent.name}
-                </Text>
+                <>
+                    {opponentUsername && (
+                        <Text margin={{ bottom: "16px" }}>
+                            Deine Spiel gegen <b>{opponentUsername}</b>
+                        </Text>
+                    )}
+                    <Text size="xlarge" margin={{ bottom: "24px" }} weight="bold">
+                        {gameTitle(gameInfo, username!)}
+                    </Text>
+                </>
             )}
             {gameBoard && gameInfo && gameInfo.guestUsername && (
                 <GameBoard
@@ -118,6 +128,29 @@ export const GamePlayPage = connect(({ environment }: RootState) => ({
             ? environment.environment.username
             : undefined,
 }))(UnenhancedGamePlayPage);
+
+const gameTitle = (game: Game, username: string) => {
+    switch (game.lastEvent.name) {
+        case GameEventName.GameCreation:
+            return "Warte auf Gast ⌛️";
+
+        case GameEventName.OpponentJoin:
+            return game.hostUsername === username
+                ? "Dein Zug 👊"
+                : `Warte bis ${game.guestUsername} seinen Zug macht ⌛️`;
+
+        case GameEventName.GamerMove:
+            return game.lastEvent.meta.username === username
+                ? `Warte bis ${game.guestUsername} seinen Zug ⌛️`
+                : "Dein Zug 👊";
+
+        case GameEventName.GameEndWithWinner:
+            return game.lastEvent.meta.winnerUsername === username ? "Du hast gewonnen 🎉" : "Du hast verloren 👎";
+
+        case GameEventName.GameEndWithDraw:
+            return "Das Remis 🤷‍♂️";
+    }
+};
 
 interface GameBoardProps {
     disabled?: boolean;
@@ -160,8 +193,11 @@ interface GameBoardCellProps {
 
 const GameBoardCell = styled.td<GameBoardCellProps>`
     border: 1px solid ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
+    color: ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
     cursor: ${props => (props.disabled || props.children !== "" ? "not-allowed" : "pointer")};
+    font-size: 36px;
+    font-weight: bold;
     text-align: center;
-    height: 50px;
-    width: 50px;
+    height: 60px;
+    width: 60px;
 `;

@@ -1,11 +1,12 @@
 import { RequestHandler } from "express";
 
 import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
-import { getGameBoard, updateGameBoard } from "../models/GameBoard";
+import { getGameBoard, updateGameBoard, isWin, isFieldFull } from "../models/GameBoard";
 import { isUserInGame, updateGameLastEvent } from "../models/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
 import { GameId, GameEventName } from "../../../common/types/Game";
+import { gameEndEventEmitter } from "../eventEmitters/GameEnd";
 
 export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -32,18 +33,27 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
         }
 
         const cell = gameBoard[coords.row] && gameBoard[coords.row][coords.column];
-        if (!cell || cell !== "N") {
+        if (cell !== null) {
             res.sendStatus(400);
             return;
         }
 
         gameBoard[coords.row][coords.column] = username;
 
-        await Promise.all([
-            updateGameBoard(gameId, gameBoard),
-            updateGameLastEvent(gameId, { name: GameEventName.GamerMove, meta: { username, coords } }),
-        ]);
-        gameMoveEventEmitter.emitGameMove({ gameId, username, gameBoard });
+        await updateGameBoard(gameId, gameBoard);
+
+        const winData = isWin(gameBoard);
+        if (winData) {
+            await updateGameLastEvent(gameId, { name: GameEventName.GameEndWithWinner, meta: winData });
+            gameEndEventEmitter.emitGameEnd(gameId);
+        } else if (isFieldFull(gameBoard)) {
+            // If there is no win and field is full, then there is a draw.
+            await updateGameLastEvent(gameId, { name: GameEventName.GameEndWithDraw });
+            gameEndEventEmitter.emitGameEnd(gameId);
+        } else {
+            await updateGameLastEvent(gameId, { name: GameEventName.GamerMove, meta: { username, coords } });
+            gameMoveEventEmitter.emitGameMove(gameId);
+        }
 
         res.sendStatus(200);
     } finally {
