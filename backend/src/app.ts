@@ -1,3 +1,5 @@
+import path from "path";
+
 // Express import and use.
 import express from "express";
 const app = express();
@@ -21,6 +23,7 @@ import { GamesCreatePostHandler } from "./handlers/GamesCreatePost";
 import { GamesJoinPostHandler } from "./handlers/GamesJoinPost";
 import { GamesInfoGetHandler } from "./handlers/GamesInfoGet";
 import { GamesMakeMovePostHandler } from "./handlers/GamesMakeMovePost";
+import { UsersLogoutPostHandler } from "./handlers/UsersLogoutPost";
 
 // Socket.IO namespaces.
 import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
@@ -35,15 +38,26 @@ app.use(
 app.post("/api/users/create", UsersCreatePostHandler);
 app.post("/api/users/login", UsersLoginPostHandler);
 app.get("/api/users/environment", UsersEnvironmentGetHandler);
+app.post("/api/users/logout", UsersLogoutPostHandler);
 
 app.post("/api/games/create", GamesCreatePostHandler);
 app.get("/api/games/:gameId/info", GamesInfoGetHandler);
 app.post("/api/games/:gameId/join", GamesJoinPostHandler);
 app.post("/api/games/:gameId/make_move", GamesMakeMovePostHandler);
 
-app.listen(3000);
+if (process.env.NODE_ENV === "production") {
+    const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
+
+    app.use(express.static(frontendDistDir));
+
+    app.get("*", (_, res) => {
+        res.sendFile(path.join(frontendDistDir, "index.html"));
+    });
+}
+
+app.listen(3000, () => console.log("Express started"));
 
 runGamesListSocketNamespace(io);
 runGamesPlaySocketNamespace(io);
 
-socketServer.listen(3002);
+socketServer.listen(3002, () => console.log("Socket server started"));
