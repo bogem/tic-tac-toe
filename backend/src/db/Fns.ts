@@ -3,7 +3,7 @@ import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 import { docClient } from "./Db";
 
-const onlyErrDocClientCallback = (resolve: () => void, reject: (reason: any) => void) => (err: AWSError) => {
+export const onlyErrDocClientCallback = (resolve: () => void, reject: (reason: any) => void) => (err: AWSError) => {
     if (err) {
         reject(err);
     } else {
