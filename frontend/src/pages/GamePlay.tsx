@@ -100,12 +100,12 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
             {gameInfo && (
                 <>
                     {opponentUsername && (
-                        <Text margin={{ bottom: "16px" }}>
-                            Deine Spiel gegen <b>{opponentUsername}</b>
+                        <Text margin={{ bottom: "16px" }} textAlign="center">
+                            Das Spiel <b>{gameInfo.name}</b> gegen <b>{opponentUsername}</b>
                         </Text>
                     )}
-                    <Text size="xlarge" margin={{ bottom: "24px" }} weight="bold">
-                        {gameTitle(gameInfo, username!)}
+                    <Text margin={{ bottom: "24px" }} size="xlarge" textAlign="center" weight="bold">
+                        {gameTitle(gameInfo, username!, opponentUsername!)}
                     </Text>
                 </>
             )}
@@ -129,7 +129,7 @@ export const GamePlayPage = connect(({ environment }: RootState) => ({
             : undefined,
 }))(UnenhancedGamePlayPage);
 
-const gameTitle = (game: Game, username: string) => {
+const gameTitle = (game: Game, username: string, opponentUsername: string) => {
     switch (game.lastEvent.name) {
         case GameEventName.GameCreation:
             return "Warte auf Gast ⌛️";
@@ -137,11 +137,11 @@ const gameTitle = (game: Game, username: string) => {
         case GameEventName.OpponentJoin:
             return game.hostUsername === username
                 ? "Dein Zug 👊"
-                : `Warte bis ${game.guestUsername} seinen Zug macht ⌛️`;
+                : `Warte bis ${opponentUsername} seinen Zug macht ⌛️`;
 
         case GameEventName.GamerMove:
             return game.lastEvent.meta.username === username
-                ? `Warte bis ${game.guestUsername} seinen Zug ⌛️`
+                ? `Warte bis ${opponentUsername} seinen Zug ⌛️`
                 : "Dein Zug 👊";
 
         case GameEventName.GameEndWithWinner:
