@@ -25,7 +25,7 @@ export type GameEvent =
           name: GameEventName.GameEndWithWinner;
           meta: {
               winnerUsername: string;
-              winningCoords: GameBoardCoords[];
+              winCoords: GameBoardCoords[];
           };
       }
     | { name: GameEventName.GameEndWithDraw };

@@ -32,7 +32,6 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
 
     const subscribeToGameMove = () => {
         gameMoveEventEmitter.onGameMove(gameId => {
-            namespace.to(gameId).emit(GamePlayEventName.GameMove, gameId);
             emitCurrentGameState(gameId);
         });
     };

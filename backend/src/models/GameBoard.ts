@@ -28,9 +28,7 @@ export const getGameBoard = (gameId: GameId): Promise<GameBoard | undefined> =>
         );
     });
 
-export const isWin = (
-    gameBoard: GameBoard
-): { winnerUsername: string; winningCoords: GameBoardCoords[] } | undefined => {
+export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords: GameBoardCoords[] } | undefined => {
     if (gameBoard.length === 0) {
         return undefined;
     }
@@ -46,7 +44,7 @@ export const isWin = (
         const foundRow = gameBoard[foundRowIndex];
         return {
             winnerUsername: foundRow[0]!,
-            winningCoords: range(foundRow.length).map(columnIndex => ({ row: foundRowIndex, column: columnIndex })),
+            winCoords: range(foundRow.length).map(columnIndex => ({ row: foundRowIndex, column: columnIndex })),
         };
     }
 
@@ -60,8 +58,8 @@ export const isWin = (
     if (foundColumnIndex > -1) {
         const foundColumn = columns[foundColumnIndex];
         return {
-            winnerUsername: foundColumnIndex[0]!,
-            winningCoords: range(foundColumn.length).map(rowIndex => ({ row: rowIndex, column: foundColumnIndex })),
+            winnerUsername: foundColumn[0]!,
+            winCoords: range(foundColumn.length).map(rowIndex => ({ row: rowIndex, column: foundColumnIndex })),
         };
     }
 
@@ -76,7 +74,7 @@ export const isWin = (
     if (hasRowSameString(dexterDiagonal)) {
         return {
             winnerUsername: dexterDiagonal[0]!,
-            winningCoords: range(dexterDiagonal.length).map(index => ({ row: index, column: index })),
+            winCoords: range(dexterDiagonal.length).map(index => ({ row: index, column: index })),
         };
     }
 
@@ -85,7 +83,7 @@ export const isWin = (
     if (hasRowSameString(sinisterDiagonal)) {
         return {
             winnerUsername: sinisterDiagonal[0]!,
-            winningCoords: range(sinisterDiagonal.length).map(index => ({
+            winCoords: range(sinisterDiagonal.length).map(index => ({
                 row: index,
                 column: columnsCount - index - 1,
             })),
