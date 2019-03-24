@@ -6,11 +6,12 @@
     "license": "MIT",
     "scripts": {
         "frontend:dev": "rm -rf frontend/dist/* && webpack --config ./frontend/webpack.dev.js",
-        "frontend:prod": "rm -rf frontend/dist/* && webpack --config ./frontend/webpack.prod.js",
-        "frontend:run": "rm -rf frontend/dist/* && webpack-dev-server --config ./frontend/webpack.dev.js --open",
-        "backend:dev": "rm -rf backend/dist/* && tsc -p ./backend/tsconfig.json",
-        "backend:prod": "npm run-script backend:dev && find backend/dist -name *.js | xargs -I '%' npx terser -m toplevel -c -o '%' -- '%' ",
-        "backend:run": "npm run-script backend:dev && nodemon ./backend/dist/backend/src/app.js"
+        "frontend:prod": "env NODE_ENV=production rm -rf frontend/dist/* && webpack --config ./frontend/webpack.prod.js",
+        "frontend:run": "rm -rf frontend/dist/* && webpack-dev-server --config ./frontend/webpack.dev.js",
+        "backend:build-dev": "rm -rf backend/dist/* && tsc -p ./backend/tsconfig.json",
+        "backend:build-prod": "npm run-script backend:build-dev && find backend/dist -name *.js | xargs -I '%' npx terser -m toplevel -d process.env.NODE_ENV='\"production\"' -c -o '%' -- '%' ",
+        "backend:run-dev": "npm run-script backend:build-dev && nodemon ./backend/dist/backend/src/app.js",
+        "backend:run-prod": "npm run-script backend:build-prod && node ./backend/dist/backend/src/app.js"
     },
     "dependencies": {
         "@babel/core": "7.4.0",
@@ -53,7 +54,6 @@
         "grommet": "2.5.5",
         "grommet-icons": "4.2.0",
         "html-webpack-plugin": "3.2.0",
-        "immer": "2.1.4",
         "lodash": "4.17.11",
         "lodash-webpack-plugin": "0.11.5",
         "nodemon": "1.18.10",
