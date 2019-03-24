@@ -52,13 +52,21 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             </Box>
             {location.hash === "#join-game" && <JoinGameModal games={games} onClose={closeModal} />}
 
-            <RoutedAnchor path="#create-game">Spiel erstellen</RoutedAnchor>
+            <Box margin={{ bottom: "16px" }}>
+                <RoutedAnchor path="#create-game">Spiel erstellen</RoutedAnchor>
+            </Box>
             {location.hash === "#create-game" && (
                 <CreateGameModal
                     goToGamePlayPage={(gameId: GameId) => history.push(`/games/${gameId}/play`)}
                     onClose={closeModal}
                 />
             )}
+
+            <Box margin={{ bottom: "16px" }}>
+                <RoutedAnchor color="status-critical" path="/logout">
+                    Logout
+                </RoutedAnchor>
+            </Box>
         </Page>
     );
 };
@@ -72,7 +80,7 @@ interface JoinGameModalProps extends HomeModalProps {
 }
 
 const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
-    <Layer onClickOutside={onClose} onEsc={onClose}>
+    <Layer onClickOutside={onClose} onEsc={onClose} responsive={false}>
         <Box pad="medium">
             {games.length === 0 ? (
                 <Text>Keine Spiele ...</Text>
@@ -107,7 +115,7 @@ interface CreateGameProps extends HomeModalProps {
 }
 
 const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
-    <Layer onClickOutside={onClose} onEsc={onClose}>
+    <Layer onClickOutside={onClose} onEsc={onClose} responsive={false}>
         <Box pad="medium">
             <Formik
                 initialValues={{ name: getRandomName(), size: 3 } as GamesCreatePostRequestBody}

@@ -16,6 +16,8 @@ import { RootDispatch } from "./stores/rootStore/RootTypes";
 import { environmentGetEnvironment } from "./stores/environmentStore/EnvironmentThunks";
 import { RootPage } from "./pages/Root";
 import { GamePlayPage } from "./pages/GamePlay";
+import { NavBar } from "./components/NavBar";
+import { LogoutPage } from "./pages/Logout";
 
 const App = () => (
     <BrowserRouter>
@@ -36,11 +38,15 @@ const App = () => (
 
                 <EnvironmentLoader />
 
+                <NavBar />
+
                 <Switch>
                     <Route path="/" exact component={RootPage} />
                     <Route path="/login" component={LoginPage} />
+                    <Route path="/logout" component={LogoutPage} />
                     <Route path="/home" component={HomePage} />
                     <Route path="/games/:gameId/play" component={GamePlayPage} />
+                    <Route path="/" component={() => <h1>404 Page Not Found</h1>} />
                 </Switch>
             </Grommet>
         </Provider>
