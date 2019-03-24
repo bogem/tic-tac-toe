@@ -27,7 +27,7 @@ import { GamesListEventName, GamesListEventData } from "../../../common/types/so
 import { Page } from "../components/Page";
 import { getRandomName } from "../utils/GetRandomName";
 import { axios } from "../utils/Api";
-import { Game } from "../../../common/types/Game";
+import { Game, GameId } from "../../../common/types/Game";
 
 export const HomePage = ({ location, history }: RouteComponentProps) => {
     const [games, setGames] = useState<Game[]>([]);
@@ -55,7 +55,7 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             <RoutedAnchor path="#create-game">Spiel erstellen</RoutedAnchor>
             {location.hash === "#create-game" && (
                 <CreateGameModal
-                    goToGamePlayPage={(gameId: string) => history.push(`/games/${gameId}/play`)}
+                    goToGamePlayPage={(gameId: GameId) => history.push(`/games/${gameId}/play`)}
                     onClose={closeModal}
                 />
             )}
@@ -103,7 +103,7 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
 );
 
 interface CreateGameProps extends HomeModalProps {
-    goToGamePlayPage: (gameId: string) => void;
+    goToGamePlayPage: (gameId: GameId) => void;
 }
 
 const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
@@ -115,7 +115,7 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
                     axios
                         .post("/api/games/create", values)
                         .then((response: AxiosResponse<GamesCreatePostResponseBody>) => {
-                            goToGamePlayPage(response.data.id);
+                            goToGamePlayPage(response.data);
                             toast("Spiel erfolgreich erstellt");
                         });
                 }}

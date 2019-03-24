@@ -1,10 +1,11 @@
-import { GameBoard } from "../types/GameBoard";
-import { put, update } from "../db/Fns";
+import { GameBoard } from "../../../common/types/GameBoard";
+import { GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
+import { put, update } from "../db/Fns";
 
 // GETs
 
-export const getGameBoard = (gameId: string): Promise<GameBoard | undefined> =>
+export const getGameBoard = (gameId: GameId): Promise<GameBoard | undefined> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
@@ -27,7 +28,7 @@ export const getGameBoard = (gameId: string): Promise<GameBoard | undefined> =>
 
 // PUTs
 
-export const createAndPutInitialGameBoard = (gameId: string, size: number) => {
+export const createAndPutInitialGameBoard = (gameId: GameId, size: number) => {
     const board: GameBoard = Array(size).fill(Array(size).fill("N"));
 
     return put({ TableName: "GameBoards", Item: { gameId, board } });
@@ -35,7 +36,7 @@ export const createAndPutInitialGameBoard = (gameId: string, size: number) => {
 
 // UPDATEs
 
-export const updateGameBoard = (gameId: string, gameBoard: GameBoard) =>
+export const updateGameBoard = (gameId: GameId, gameBoard: GameBoard) =>
     update({
         TableName: "GameBoards",
         Key: { gameId },

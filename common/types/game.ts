@@ -1,7 +1,9 @@
 import { GameBoardCoords } from "./GameBoard";
 
+export type GameId = string;
+
 export interface Game {
-    id: string;
+    id: GameId;
     name: string;
     hostUsername: string;
     size: number;
@@ -20,16 +22,18 @@ export type GameEvent =
           };
       }
     | {
-          name: GameEventName.GameEnd;
+          name: GameEventName.GameEndWithWinner;
           meta: {
               winner: string;
               winningCoords: GameBoardCoords[];
           };
-      };
+      }
+    | { name: GameEventName.GameEndWithDraw };
 
 export enum GameEventName {
     GameCreation = "GameCreation",
     OpponentJoin = "OpponentJoin",
     GamerMove = "GamerMove",
-    GameEnd = "GameEnd",
+    GameEndWithWinner = "GameEndWithWinner",
+    GameEndWithDraw = "GameEndWithDraw",
 }

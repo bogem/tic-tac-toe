@@ -1,3 +1,3 @@
-import { Game } from "../../../../Game";
+import { GameId } from "../../../../Game";
 
-export type GamesCreatePostResponseBody = Game;
+export type GamesCreatePostResponseBody = GameId;

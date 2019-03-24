@@ -2,7 +2,9 @@ import { AxiosPromise } from "axios";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Text } from "grommet";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { connect } from "react-redux";
+import socketIo from "socket.io-client";
 
 import { Page } from "../components/Page";
 import { GamesInfoGetResponseBody } from "../../../common/types/api/games/info/get/ResponseBody";
@@ -10,8 +12,8 @@ import { axios, isResponseSuccessBody } from "../utils/Api";
 import { GameEventName, Game } from "../../../common/types/Game";
 import { GameBoard as GameBoardType } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
-import { connect } from "react-redux";
-import socketIo from "socket.io-client";
+import { CurrentGameStateEventData, GamePlayEventName } from "../../../common/types/sockets/GamesPlay";
+import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
 
 interface GamePlayPageReduxProps {
     username: string | undefined;
@@ -21,26 +23,27 @@ type GamePlayPageProps = GamePlayPageReduxProps & RouteComponentProps<{ gameId: 
 
 const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
     const [gameInfo, setGameInfo] = useState<Game | undefined>(undefined);
-    const [gameBoard] = useState<GameBoardType | undefined>(undefined);
+    const [gameBoard, setGameBoard] = useState<GameBoardType | undefined>(undefined);
 
     const { gameId } = match.params;
+    let socket: SocketIOClient.Socket | undefined;
 
     useEffect(() => {
         if (!username) {
             return;
         }
 
-        let socket: SocketIOClient.Socket | undefined;
-
         const fetchGameInfo = (): AxiosPromise<GamesInfoGetResponseBody> => axios.get(`/api/games/${gameId}/info`);
         const joinGame = () => axios.post(`/api/games/${gameId}/join`);
         const listenToGameSocket = () => {
             socket = socketIo("http://localhost:3002/games/play");
+            socket.emit(GamePlayEventName.GameRoomConnect, { gameId, username });
 
-            socket.emit("game_room_connect", { gameId, username });
-            socket.on("current_game_state", console.log);
-            socket.on("opponent_join", console.log);
-            socket.on("game_move", console.log);
+            socket.on(GamePlayEventName.CurrentGameState, (data: CurrentGameStateEventData) => {
+                setGameInfo(data.game);
+                setGameBoard(data.gameBoard);
+            });
+            socket.on(GamePlayEventName.GameMove, (data: any) => console.log(data));
         };
 
         fetchGameInfo().then(response => {
@@ -69,6 +72,21 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
         };
     }, [gameId, username]);
 
+    const makeMove = (row: number, column: number) => {
+        if (!gameBoard || gameBoard[row][column] !== "") {
+            return;
+        }
+
+        const newGameBoardRow = gameBoard[row].slice();
+        newGameBoardRow[column] = username!;
+
+        const newGameBoard = gameBoard.slice();
+        newGameBoard[row] = newGameBoardRow;
+
+        setGameBoard(newGameBoard);
+        axios.post(`/api/games/${gameId}/make_move`, { coords: { row, column } } as GamesMakeMoveRequestBody);
+    };
+
     const isGameBoardEnabled =
         gameInfo &&
         ((gameInfo.lastEvent.name === GameEventName.OpponentJoin && gameInfo.hostUsername === username) ||
@@ -81,7 +99,15 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
                     <b>Aktuelle Stand:</b> {gameInfo.lastEvent.name}
                 </Text>
             )}
-            {gameBoard && <GameBoard gameBoard={gameBoard} disabled={!isGameBoardEnabled} username={username!} />}
+            {gameBoard && gameInfo && gameInfo.guestUsername && (
+                <GameBoard
+                    gameBoard={gameBoard}
+                    guestUsername={gameInfo.guestUsername}
+                    disabled={!isGameBoardEnabled}
+                    hostUsername={gameInfo.hostUsername}
+                    onCellClick={makeMove}
+                />
+            )}
         </Page>
     );
 };
@@ -96,7 +122,9 @@ export const GamePlayPage = connect(({ environment }: RootState) => ({
 interface GameBoardProps {
     disabled?: boolean;
     gameBoard: GameBoardType;
-    username: string;
+    guestUsername: string;
+    hostUsername: string;
+    onCellClick: (row: number, column: number) => void;
 }
 
 /* TODO: after TS 3.4 release use "as const" in GameBoardCell children. */
@@ -106,8 +134,16 @@ const GameBoard = (props: GameBoardProps) => (
             {props.gameBoard.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                     {row.map((column, columnIndex) => (
-                        <GameBoardCell disabled={props.disabled} key={columnIndex}>
-                            {column === props.username ? ("X" as "X") : column === "N" ? ("" as "") : ("O" as "O")}
+                        <GameBoardCell
+                            disabled={props.disabled}
+                            key={columnIndex}
+                            onClick={() => props.onCellClick(rowIndex, columnIndex)}
+                        >
+                            {column === props.hostUsername
+                                ? ("X" as "X")
+                                : column === props.guestUsername
+                                ? ("O" as "O")
+                                : ("" as "")}
                         </GameBoardCell>
                     ))}
                 </tr>
@@ -119,18 +155,13 @@ const GameBoard = (props: GameBoardProps) => (
 interface GameBoardCellProps {
     children: "X" | "O" | "";
     disabled?: boolean;
+    onClick: () => void;
 }
 
 const GameBoardCell = styled.td<GameBoardCellProps>`
-    border: 1px solid #4f4f4f;
-    cursor: pointer;
+    border: 1px solid ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
+    cursor: ${props => (props.disabled || props.children !== "" ? "not-allowed" : "pointer")};
+    text-align: center;
     height: 50px;
     width: 50px;
-
-    ${props =>
-        props.disabled &&
-        css`
-            border: 1px solid #dadada;
-            cursor: not-allowed;
-        `}
 `;

@@ -1,11 +1,11 @@
-import { GameEvent, Game } from "../../../common/types/Game";
+import { GameEvent, Game, GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
-import { put } from "../db/Fns";
+import { put, update } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
 
 // GETs
 
-export const getGame = (gameId: string): Promise<Game | undefined> =>
+export const getGame = (gameId: GameId): Promise<Game | undefined> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
@@ -22,12 +22,12 @@ export const getGame = (gameId: string): Promise<Game | undefined> =>
         );
     });
 
-export const isUserInGame = (gameId: string, username: string): Promise<boolean> =>
+export const isUserInGame = (gameId: GameId, username: string): Promise<boolean> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
                 TableName: "Games",
-                Key: { gameId },
+                Key: { id: gameId },
             },
             (err, data) => {
                 if (err) {
@@ -70,50 +70,20 @@ export const putGame = (game: Game) => put({ TableName: "Games", Item: game });
 
 // UPDATEs
 
-export const updateGameGuestUsername = (gameId: string, guestUsername: string) =>
-    new Promise((resolve, reject) => {
-        docClient.update(
-            {
-                TableName: "Games",
-                Key: { id: gameId },
-                UpdateExpression: "set #gu = :gu",
-                ExpressionAttributeNames: { "#gu": "guestUsername" },
-                ExpressionAttributeValues: { ":gu": guestUsername },
-            },
-            err => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            }
-        );
+export const updateGameGuestUsername = (gameId: GameId, guestUsername: string) =>
+    update({
+        TableName: "Games",
+        Key: { id: gameId },
+        UpdateExpression: "set #gu = :gu",
+        ExpressionAttributeNames: { "#gu": "guestUsername" },
+        ExpressionAttributeValues: { ":gu": guestUsername },
     });
 
-export const updateGameLastEvent = (gameId: string, event: GameEvent) =>
-    new Promise((resolve, reject) => {
-        docClient.update(
-            {
-                TableName: "Games",
-                Key: { id: gameId },
-                UpdateExpression: "set #e = :e",
-                ExpressionAttributeNames: { "#e": "event" },
-                ExpressionAttributeValues: { ":e": event },
-            },
-            err => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            }
-        );
+export const updateGameLastEvent = (gameId: GameId, event: GameEvent) =>
+    update({
+        TableName: "Games",
+        Key: { id: gameId },
+        UpdateExpression: "set #e = :e",
+        ExpressionAttributeNames: { "#e": "lastEvent" },
+        ExpressionAttributeValues: { ":e": event },
     });
-
-interface GamesHistoriesItem {
-    id: string;
-    gameId: string;
-    event: GameEvent;
-}
-
-export const putGamesHistoriesItem = (item: GamesHistoriesItem) => put({ TableName: "GamesHistories", Item: item });

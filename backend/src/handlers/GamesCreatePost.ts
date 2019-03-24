@@ -19,25 +19,21 @@ export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
     }
 
     try {
-        // Put game.
         const gameId = uuid();
         const hostUsername = await getUsernameWithToken(token);
-        // TODO: after TS 3.4 release use "as const".
-        const event = { name: GameEventName.GameCreation as GameEventName.GameCreation };
-        const game = { lastEvent: event, hostUsername, id: gameId, ...body };
-        await putGame(game);
 
-        // Put game's history item.
-        // await putGamesHistoriesItem({
-        //     gameId,
-        //     id: uuid(),
-        //     status: { type: statusType },
-        // });
+        const game = {
+            lastEvent: {
+                name: GameEventName.GameCreation as GameEventName.GameCreation,
+            },
+            hostUsername,
+            id: gameId,
+            ...body,
+        };
 
-        // Create game's board.
-        await createAndPutInitialGameBoard(gameId, body.size);
+        await Promise.all([putGame(game), createAndPutInitialGameBoard(gameId, body.size)]);
 
         newGameEventEmitter.emitNewGame();
-        res.send(game as GamesCreatePostResponseBody);
+        res.send(gameId as GamesCreatePostResponseBody);
     } catch (e) {}
 };

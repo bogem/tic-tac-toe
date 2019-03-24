@@ -2,9 +2,10 @@ import { RequestHandler } from "express";
 
 import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
 import { getGameBoard, updateGameBoard } from "../models/GameBoard";
-import { isUserInGame } from "../models/Game";
+import { isUserInGame, updateGameLastEvent } from "../models/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
+import { GameId, GameEventName } from "../../../common/types/Game";
 
 export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -13,7 +14,8 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
         return;
     }
 
-    const { gameId, coords } = req.body as GamesMakeMoveRequestBody;
+    const { gameId } = req.params as { gameId: GameId };
+    const { coords } = req.body as GamesMakeMoveRequestBody;
 
     try {
         const username = await getUsernameWithToken(token);
@@ -37,7 +39,13 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
 
         gameBoard[coords.row][coords.column] = username;
 
-        await updateGameBoard(gameId, gameBoard);
+        await Promise.all([
+            updateGameBoard(gameId, gameBoard),
+            updateGameLastEvent(gameId, { name: GameEventName.GamerMove, meta: { username, coords } }),
+        ]);
         gameMoveEventEmitter.emitGameMove({ gameId, username, gameBoard });
-    } catch (error) {}
+
+        res.sendStatus(200);
+    } finally {
+    }
 };

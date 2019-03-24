@@ -1,11 +1,24 @@
-import { GameBoardCoords } from "../GameBoard";
+import { GameBoardCoords, GameBoard } from "../GameBoard";
+import { Game, GameId } from "../Game";
 
-export interface GameJoinEventData {
+export enum GamePlayEventName {
+    CurrentGameState = "CurrentGameState",
+    GameMove = "GameMove",
+    GameRoomConnect = "GameRoomConnect",
+}
+
+export interface CurrentGameStateEventData {
+    game: Game;
+    gameBoard: GameBoard;
+}
+
+export interface GameRoomConnectEventData {
+    gameId: GameId;
     username: string;
-    gameId: string;
 }
 
 export interface GameMoveEventData {
+    gameId: GameId;
     username: string;
     coords: GameBoardCoords;
 }

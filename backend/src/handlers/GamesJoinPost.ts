@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 
-import { GameEventName } from "../../../common/types/Game";
+import { GameEventName, GameId } from "../../../common/types/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { updateGameGuestUsername, updateGameLastEvent } from "../models/Game";
 import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
@@ -12,23 +12,16 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
         return;
     }
 
-    const { gameId } = req.params as { gameId: string };
+    const { gameId } = req.params as { gameId: GameId };
 
     try {
         const username = await getUsernameWithToken(token);
 
-        // await putGamesHistoriesItem({
-        //     gameId,
-        //     id: uuid(),
-        //     status: {
-        //         type: statusType,
-        //         meta: { gamer: Gamer.Host },
-        //     },
-        // });
-
-        await updateGameGuestUsername(gameId, username);
-        await updateGameLastEvent(gameId, { name: GameEventName.OpponentJoin });
-        opponentJoinEventEmitter.emitOpponentJoin();
+        await Promise.all([
+            updateGameGuestUsername(gameId, username),
+            updateGameLastEvent(gameId, { name: GameEventName.OpponentJoin }),
+        ]);
+        opponentJoinEventEmitter.emitOpponentJoin({ gameId, username });
 
         res.sendStatus(200);
     } catch (e) {}
