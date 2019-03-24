@@ -26,14 +26,12 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
 
     const subscribeToOpponentJoin = () => {
         opponentJoinEventEmitter.onOpponentJoin(gameId => {
-            console.log("opponent_join", gameId);
             emitCurrentGameState(gameId);
         });
     };
 
     const subscribeToGameMove = () => {
         gameMoveEventEmitter.onGameMove(gameId => {
-            console.log("game_move", gameId);
             namespace.to(gameId).emit(GamePlayEventName.GameMove, gameId);
             emitCurrentGameState(gameId);
         });
@@ -41,7 +39,6 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
 
     const subscribeToGameEnd = () => {
         gameEndEventEmitter.onGameEnd(gameId => {
-            console.log("game_end", gameId);
             emitCurrentGameState(gameId);
         });
     };
@@ -49,7 +46,6 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
     const runNamespace = () => {
         namespace.on("connection", socket => {
             socket.on(GamePlayEventName.GameRoomConnect, ({ gameId, username }: GameRoomConnectEventData) => {
-                console.log("game_room_connect", { gameId, username });
                 username; // check if user joined the game and can connect to room.
 
                 if (!rooms.includes(gameId)) {
