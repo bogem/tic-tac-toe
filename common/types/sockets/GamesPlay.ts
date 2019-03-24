@@ -3,7 +3,6 @@ import { Game, GameId } from "../Game";
 
 export enum GamePlayEventName {
     CurrentGameState = "CurrentGameState",
-    GameMove = "GameMove",
     GameRoomConnect = "GameRoomConnect",
 }
 
