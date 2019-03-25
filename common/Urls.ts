@@ -7,7 +7,7 @@ if (typeof window === "undefined" && typeof process !== "undefined" && process.e
 
 export const ServerUrl = process.env.NODE_ENV === "production" ? process.env.SERVER_URL : "http://localhost";
 
-export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "localhost:3002";
+export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "http://localhost:3002";
 
 export const ApiServerPort = process.env.NODE_ENV === "production" ? 80 : 3000;
 export const ApiServerUrl = `${ServerUrl}:${ApiServerPort}`;
