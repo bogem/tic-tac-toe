@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { Text, RoutedAnchor, Anchor } from "grommet";
+import { Text, RoutedAnchor, Anchor, Box } from "grommet";
 import { Github } from "grommet-icons";
 
 import { RootState } from "../stores/rootStore/RootTypes";
@@ -19,14 +19,16 @@ const UnenhancedNavBar = (props: NavBarProps) => (
         <NavBarContent>
             {props.username ? (
                 <>
-                    <RoutedAnchor path="/home">Home</RoutedAnchor>
+                    <Box margin={{ left: "16px" }}>
+                        <RoutedAnchor path="/home">Home</RoutedAnchor>
+                    </Box>
                     <Text weight="bold">{props.username}</Text>
                 </>
             ) : null}
             <Anchor
                 href="https://github.com/bogem/tic-tac-toe"
                 icon={<Github color="#24292e" />}
-                margin={!props.username ? "0 auto" : undefined}
+                margin={!props.username ? "0 auto" : { right: "4px" }}
                 target="_blank"
             />
         </NavBarContent>

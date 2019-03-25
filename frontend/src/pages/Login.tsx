@@ -74,7 +74,7 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
                             </Box>
                         </Form>
 
-                        <Text>
+                        <Text textAlign="center">
                             {values.isRegistering ? (
                                 <>
                                     Du hast schon einen Account?{" "}
