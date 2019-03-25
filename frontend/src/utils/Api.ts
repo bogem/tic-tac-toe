@@ -1,6 +1,8 @@
 import originalAxios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
+import { ApiServerUrl } from "../../../common/Urls";
+
 export type ApiData<GetResponseSuccessBody> = "Not Asked" | "Loading" | AxiosError | GetResponseSuccessBody;
 
 export const isResponseSuccessBody = <T>(apiData: ApiData<T>): apiData is T =>
@@ -10,7 +12,7 @@ export const isResponseError = <T>(apiData: ApiData<T>): apiData is AxiosError =
     typeof apiData !== "string" && "config" in apiData;
 
 export const axios = originalAxios.create({
-    baseURL: "http://localhost:3000/",
+    baseURL: ApiServerUrl,
     withCredentials: true,
 });
 

@@ -1,9 +1,11 @@
 import { GameId } from "./types/Game";
 
+export const ClientUrl = process.env.NODE_ENV === "production" ? "http://163.172.171.249" : "localhost:3002";
+
 export const ApiServerPort = process.env.NODE_ENV === "production" ? 80 : 3000;
 export const ApiServerUrl = `http://localhost:${ApiServerPort}`;
 
-export const SocketServerPort = 3002;
+export const SocketServerPort = 3001;
 export const SocketServerUrl = `http://localhost:${SocketServerPort}`;
 
 export const DynamoDbUrl =

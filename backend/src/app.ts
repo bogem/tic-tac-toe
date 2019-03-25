@@ -7,6 +7,7 @@ import {
     gameMakeMoveApiPathname,
     ApiServerPort,
     SocketServerPort,
+    ClientUrl,
 } from "../../common/Urls";
 
 // Express import and use.
@@ -40,9 +41,9 @@ import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
 import { runGamesStateSocketNamespace } from "./socketNamespaces/GamesState";
 
 app.use(
-    cors({ credentials: true, origin: "http://localhost:3001" }),
+    cors({ credentials: true, origin: ClientUrl }),
     bodyParser.json(),
-    cookieSession({ name: "tic-tac-toe", keys: ["12345"] })
+    cookieSession({ name: "tic-tac-toe", keys: ["42"] })
 );
 
 app.post(ApiPathname.UsersCreate, UsersCreatePostHandler);
