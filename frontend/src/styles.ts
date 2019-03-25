@@ -237,9 +237,6 @@ export const GlobalStyle = createGlobalStyle`
         padding: 16px;
         position: relative;
     }
-    .Toastify__toast--default {
-        background: #fff;
-        color: #aaa; }
     .Toastify__toast--info {
         background: #3498db; }
     .Toastify__toast--success {
