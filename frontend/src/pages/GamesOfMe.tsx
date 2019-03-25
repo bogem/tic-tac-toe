@@ -32,15 +32,13 @@ const UnenhancedGamesOfMePage = ({ username }: GamesOfMePageProps) => {
                 <Text>Du hast noch nicht gespielt</Text>
             ) : (
                 games.map(game => (
-                    <GameUl>
+                    <GameList>
                         <li>
                             <b>Name:</b> <RoutedAnchor path={gamesPlayPagePathname(game.id)}>{game.name}</RoutedAnchor>
                         </li>
 
                         <ul>
-                            <li>
-                                <b>Status:</b> {gameStatus(game, username!)}
-                            </li>
+                            <li>{gameStatus(game, username!)}</li>
                             <li>
                                 <b>Autor:</b> {game.hostUsername}
                             </li>
@@ -51,16 +49,16 @@ const UnenhancedGamesOfMePage = ({ username }: GamesOfMePageProps) => {
                                 <b>Größe:</b> {game.size}x{game.size}
                             </li>
                         </ul>
-                    </GameUl>
+                    </GameList>
                 ))
             )}
         </Page>
     );
 };
 
-const GameUl = styled.ul`
+const GameList = styled.ul`
     margin-bottom: 16px;
-    width: 100%;
+    width: 260px;
 `;
 
 export const GamesOfMePage = connect(({ environment }: RootState) => ({
