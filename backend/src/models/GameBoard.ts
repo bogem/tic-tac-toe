@@ -41,7 +41,6 @@ export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords
     const foundRowIndex = findRowIndexWithSameString(gameBoard);
 
     if (foundRowIndex > -1) {
-        console.log(foundRowIndex, gameBoard);
         const foundRow = gameBoard[foundRowIndex];
         return {
             winnerUsername: foundRow[0]!,
