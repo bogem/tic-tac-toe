@@ -1,7 +1,7 @@
 import { GameId } from "./types/Game";
 import { checkEnvVariable } from "./Env";
 
-if (!window && process && process.env.NODE_ENV === "production") {
+if (typeof window === "undefined" && typeof process !== "undefined" && process.env.NODE_ENV === "production") {
     checkEnvVariable("SERVER_URL");
 }
 
@@ -16,7 +16,7 @@ export const SocketServerPort = 3001;
 export const SocketServerUrl = `${ServerUrl}:${SocketServerPort}`;
 
 export const DynamoDbUrl =
-    process.env.NODE_ENV === "production" ? "dynamodb.eu-central-1.amazonaws.com" : "http://localhost:8080";
+    process.env.NODE_ENV === "production" ? "dynamodb.eu-central-1.amazonaws.com" : "http://localhost:8000";
 
 export enum PagePathname {
     Root = "/",
