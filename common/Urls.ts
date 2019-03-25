@@ -1,11 +1,6 @@
 import { GameId } from "./types/Game";
-import { checkEnvVariable } from "./Env";
 
-if (process.env.NODE_ENV) {
-    checkEnvVariable("SERVER_URL");
-}
-
-export const ServerUrl = process.env.NODE_ENV === "production" ? process.env.SERVER_URL : "http://localhost";
+export const ServerUrl = process.env.NODE_ENV === "production" ? "http://163.172.171.249" : "http://localhost";
 
 export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "localhost:3002";
 
