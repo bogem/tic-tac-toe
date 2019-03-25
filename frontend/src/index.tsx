@@ -13,7 +13,6 @@ import { RootDispatch } from "./stores/rootStore/RootTypes";
 import { environmentGetEnvironment } from "./stores/environmentStore/EnvironmentThunks";
 import { RootPage } from "./pages/Root";
 import { GamePlayPage } from "./pages/GamePlay";
-import { NavBar } from "./components/NavBar";
 import { LogoutPage } from "./pages/Logout";
 import { PagePathname, gamesPlayPagePathname } from "../../common/Urls";
 
@@ -33,8 +32,6 @@ const App = () => (
                 />
 
                 <EnvironmentLoader />
-
-                <NavBar />
 
                 <Switch>
                     <Route path={PagePathname.Root} exact component={RootPage} />

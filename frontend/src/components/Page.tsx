@@ -7,6 +7,7 @@ import { Heading } from "grommet";
 import { BarLoader } from "./BarLoader";
 import { RootState } from "../stores/rootStore/RootTypes";
 import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
+import { NavBar } from "./NavBar";
 
 interface PageReduxProps {
     isLoggedIn: boolean | undefined;
@@ -32,24 +33,41 @@ const UnenhancedPage = (props: PageProps) => {
         return null;
     }
 
+    let children;
     if (props.isLoading) {
-        return (
+        children = (
             <BarLoaderContainer>
                 <Heading level="2">Laden...</Heading>
                 <BarLoader height={11} loading={props.isLoading || false} width={200} />
             </BarLoaderContainer>
         );
+    } else {
+        children = props.children;
     }
 
-    return <PageContainer>{props.children}</PageContainer>;
+    return (
+        <PageContainer>
+            <NavBar />
+            <PageContent>{children}</PageContent>
+        </PageContainer>
+    );
 };
 
 const PageContainer = styled.main`
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+`;
+
+const PageContent = styled.div`
     align-items: center;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    height: 100%;
+    margin-top: -50px; /* height of navbar */
     justify-content: center;
+    width: 100%;
 `;
 
 const BarLoaderContainer = styled.div`
