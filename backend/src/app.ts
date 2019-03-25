@@ -50,7 +50,11 @@ app.post(gameMakeMoveApiPathname(":gameId"), GamesMakeMovePostHandler);
 if (process.env.NODE_ENV === "production") {
     const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
 
-    app.use(express.static(frontendDistDir));
+    app.get("*.js", function(req, res) {
+        res.set("Content-Encoding", "gzip");
+        res.set("Content-Type", "text/javascript");
+        res.sendFile(path.join(frontendDistDir, req.url + ".gz"));
+    });
 
     app.get("*", (_, res) => {
         res.sendFile(path.join(frontendDistDir, "index.html"));

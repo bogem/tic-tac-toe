@@ -1,4 +1,3 @@
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
 const path = require("path");
@@ -46,7 +45,6 @@ module.exports = {
         ],
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin({ tsconfig: path.join(__dirname, "tsconfig.json"), watch: __dirname }),
         new LodashModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: "Tic-Tac-Toe",

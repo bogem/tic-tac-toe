@@ -1,4 +1,5 @@
 const path = require("path");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { NamedModulesPlugin } = require("webpack");
 const merge = require("webpack-merge");
 
@@ -15,5 +16,8 @@ module.exports = merge(common, {
         port: 3001,
     },
 
-    plugins: [new NamedModulesPlugin()],
+    plugins: [
+        new NamedModulesPlugin(),
+        new ForkTsCheckerWebpackPlugin({ tsconfig: path.join(__dirname, "tsconfig.json"), watch: __dirname }),
+    ],
 });
