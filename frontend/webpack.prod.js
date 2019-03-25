@@ -27,7 +27,7 @@ module.exports = merge(common, {
             test: /\.js(\?.*)?$/i,
         }),
         new DefinePlugin({
-            "process.env.SERVER_URL": process.env.SERVER_URL,
+            "process.env.SERVER_URL": JSON.stringify(process.env.SERVER_URL),
         }),
         new HashedModuleIdsPlugin(),
     ],
