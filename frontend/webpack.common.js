@@ -9,6 +9,8 @@ module.exports = {
     entry: path.join(srcPath, "index.tsx"),
 
     output: {
+        filename: `[name].[contenthash].js`,
+        chunkFilename: `[name].[chunkhash].js`,
         path: distPath,
         pathinfo: false,
         publicPath: "/",
