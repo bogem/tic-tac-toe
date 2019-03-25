@@ -1,11 +1,10 @@
-import { Helmet } from "react-helmet";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { BarLoader } from "react-spinners";
 import { connect } from "react-redux";
 import { Heading } from "grommet";
 
+import { BarLoader } from "./BarLoader";
 import { RootState } from "../stores/rootStore/RootTypes";
 import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
 
@@ -24,6 +23,10 @@ interface PageOwnProps {
 type PageProps = PageReduxProps & PageOwnProps & RouteComponentProps;
 
 const UnenhancedPage = (props: PageProps) => {
+    useEffect(() => {
+        document.title = props.title;
+    }, [props.title]);
+
     if (!props.public && props.isLoggedIn === false) {
         props.history.push("/login");
         return null;
@@ -33,18 +36,12 @@ const UnenhancedPage = (props: PageProps) => {
         return (
             <BarLoaderContainer>
                 <Heading level="2">Laden...</Heading>
-                <BarLoader color="#00739d" height={11} loading={props.isLoading || false} width={200} />
+                <BarLoader height={11} loading={props.isLoading || false} width={200} />
             </BarLoaderContainer>
         );
     }
 
-    return (
-        <PageContainer>
-            <Helmet title={props.title} />
-
-            {props.children}
-        </PageContainer>
-    );
+    return <PageContainer>{props.children}</PageContainer>;
 };
 
 const PageContainer = styled.main`
