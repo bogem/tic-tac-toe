@@ -43,7 +43,7 @@ export const environmentLogin = (username: string, password: string) => (dispatc
 
             toast(
                 <span>
-                    Hi <b>${username}</b>, du bist erfolgreich eingeloggt
+                    Hi <b>{username}</b>, du bist erfolgreich eingeloggt
                 </span>
             );
 
@@ -76,7 +76,7 @@ export const environmentRegister = (username: string, password: string) => (disp
 
             toast(
                 <span>
-                    Hi <b>${username}</b>, du bist erfolgreich registriert
+                    Hi <b>{username}</b>, du bist erfolgreich registriert
                 </span>
             );
 

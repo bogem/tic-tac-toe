@@ -26,6 +26,7 @@ import { GamesJoinPostHandler } from "./handlers/GamesJoinPost";
 import { GamesGetHandler } from "./handlers/GamesGet";
 import { GamesMakeMovePostHandler } from "./handlers/GamesMakeMovePost";
 import { UsersLogoutPostHandler } from "./handlers/UsersLogoutPost";
+import { GamesOfMeGetHandler } from "./handlers/GamesOfMeGet";
 
 // Socket.IO namespaces.
 import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
@@ -43,6 +44,7 @@ app.get(ApiPathname.UsersMe, UsersMeGetHandler);
 app.post(ApiPathname.UsersLogout, UsersLogoutPostHandler);
 
 app.post(ApiPathname.GamesCreate, GamesCreatePostHandler);
+app.get(ApiPathname.GamesOfMe, GamesOfMeGetHandler);
 app.get(getGameApiPathname(":gameId"), GamesGetHandler);
 app.post(gameJoinApiPathname(":gameId"), GamesJoinPostHandler);
 app.post(gameMakeMoveApiPathname(":gameId"), GamesMakeMovePostHandler);

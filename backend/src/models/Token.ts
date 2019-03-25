@@ -4,7 +4,7 @@ import { docClient } from "../db/Db";
 import { put, onlyErrDocClientCallback } from "../db/Fns";
 import { TableName } from "../db/Tables";
 
-export const ERROR_NO_USERNAME_FOUND = new Error("No username found");
+export const ERROR_USERNAME_NOT_FOUND = new Error("Username not found");
 
 // DELETEs
 
@@ -28,7 +28,7 @@ export const getUsernameWithToken = (token: string): Promise<string> =>
                     reject(err);
                 } else {
                     if (!data.Item) {
-                        reject(ERROR_NO_USERNAME_FOUND);
+                        reject(ERROR_USERNAME_NOT_FOUND);
                     } else {
                         resolve(data.Item.username as string);
                     }

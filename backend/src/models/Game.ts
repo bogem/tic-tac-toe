@@ -6,7 +6,7 @@ import { put, update } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
 import { TableName } from "../db/Tables";
 
-export const ERROR_GAME_IS_NOT_FOUND = new Error("Game is not found");
+export const ERROR_GAME_NOT_FOUND = new Error("Game not found");
 
 // GETs
 
@@ -21,9 +21,33 @@ export const getGame = (gameId: GameId): Promise<Game> =>
                 if (err) {
                     reject(err);
                 } else if (!data.Item) {
-                    reject(ERROR_GAME_IS_NOT_FOUND);
+                    reject(ERROR_GAME_NOT_FOUND);
                 } else {
                     resolve(data.Item as Game);
+                }
+            }
+        );
+    });
+
+export const getUsersGames = (username: String): Promise<Game[]> =>
+    new Promise((resolve, reject) => {
+        docClient.scan(
+            {
+                TableName: TableName.Games,
+                FilterExpression: "#gu = :u or #hu = :u",
+                ExpressionAttributeNames: {
+                    "#gu": "guestUsername",
+                    "#hu": "hostUsername",
+                },
+                ExpressionAttributeValues: {
+                    ":u": username,
+                },
+            },
+            (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve((data.Items || []) as Game[]);
                 }
             }
         );
@@ -47,7 +71,7 @@ export const isUserInGame = (gameId: GameId, username: string): Promise<boolean>
         );
     });
 
-export const scanOnlyCreatedGames = (): Promise<Game[]> =>
+export const getOnlyCreatedGames = (): Promise<Game[]> =>
     new Promise((resolve, reject) => {
         docClient.scan(
             {

@@ -9,7 +9,7 @@ import socketIo from "socket.io-client";
 import { Page } from "../components/Page";
 import { GamesGetResponseBody } from "../../../common/types/api/games/get/ResponseBody";
 import { axios, isResponseSuccessBody } from "../utils/Api";
-import { GameEventName, Game } from "../../../common/types/Game";
+import { GameEventName, Game, gameStatus, opponentUsername } from "../../../common/types/Game";
 import { GameBoard as GameBoardType, GameBoardCoords } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
 import { CurrentGameStateEventData, GameStateEventName } from "../../../common/types/sockets/GamesState";
@@ -106,7 +106,7 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
         (game.lastEvent.name === GameEventName.GameEndWithDraw ||
             game.lastEvent.name === GameEventName.GameEndWithWinner);
 
-    const opponentUsername = game && (game.hostUsername === username ? game.guestUsername : game.hostUsername);
+    const opponent = game && username && opponentUsername(game, username);
 
     return (
         <Page isLoading={username === undefined} title="Spielen">
@@ -117,15 +117,15 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
                             {game.name}
                         </Text>
 
-                        {opponentUsername && (
+                        {opponent && (
                             <Text textAlign="center">
-                                gegen <b>{opponentUsername}</b>
+                                gegen <b>{opponent}</b>
                             </Text>
                         )}
                     </Box>
 
                     <Text margin={{ bottom: "24px" }} size="xlarge" textAlign="center" weight="bold">
-                        {gameTitle(game, username!, opponentUsername!)}
+                        {gameStatus(game, username!)}
                     </Text>
                 </>
             )}
@@ -163,25 +163,6 @@ export const GamePlayPage = connect(({ environment }: RootState) => ({
             ? environment.me.username
             : undefined,
 }))(UnenhancedGamePlayPage);
-
-const gameTitle = (game: Game, username: string, opponentUsername: string) => {
-    switch (game.lastEvent.name) {
-        case GameEventName.GameCreation:
-            return "Warte auf Gast ⌛️";
-
-        case GameEventName.OpponentJoin:
-            return game.hostUsername === username ? "Dein Zug 👊" : `${opponentUsername}'s Zug ⌛️`;
-
-        case GameEventName.GamerMove:
-            return game.lastEvent.meta.username === username ? `${opponentUsername}'s Zug ⌛️` : "Dein Zug 👊";
-
-        case GameEventName.GameEndWithWinner:
-            return game.lastEvent.meta.winnerUsername === username ? "Du hast gewonnen 🎉" : "Du hast verloren 👎";
-
-        case GameEventName.GameEndWithDraw:
-            return "Das Remis 🤷‍♂️";
-    }
-};
 
 interface GameBoardProps {
     disabled?: boolean;

@@ -22,6 +22,7 @@ export enum ApiPathname {
     UsersLogout = "/api/users/logout",
 
     GamesCreate = "/api/games/create",
+    GamesOfMe = "/api/games/of_me",
 }
 
 export const getGameApiPathname = (gameId: GameId | ":gameId") => `/api/games/${gameId}`;

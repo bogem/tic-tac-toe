@@ -6,9 +6,11 @@ import { docClient } from "../db/Db";
 import { put, update } from "../db/Fns";
 import { TableName } from "../db/Tables";
 
+export const ERROR_GAME_BOARD_NOT_FOUND = new Error("Game board is not found");
+
 // GETs
 
-export const getGameBoard = (gameId: GameId): Promise<GameBoard | undefined> =>
+export const getGameBoard = (gameId: GameId): Promise<GameBoard> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
@@ -18,12 +20,10 @@ export const getGameBoard = (gameId: GameId): Promise<GameBoard | undefined> =>
             (err, data) => {
                 if (err) {
                     reject(err);
+                } else if (!data.Item) {
+                    reject(ERROR_GAME_BOARD_NOT_FOUND);
                 } else {
-                    if (data.Item) {
-                        resolve(data.Item.board as GameBoard);
-                    } else {
-                        resolve(undefined);
-                    }
+                    resolve(data.Item.board as GameBoard);
                 }
             }
         );

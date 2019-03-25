@@ -37,3 +37,27 @@ export enum GameEventName {
     GameEndWithWinner = "GameEndWithWinner",
     GameEndWithDraw = "GameEndWithDraw",
 }
+
+export const gameStatus = (game: Game, username: string) => {
+    switch (game.lastEvent.name) {
+        case GameEventName.GameCreation:
+            return "Warte auf Gast ⌛️";
+
+        case GameEventName.OpponentJoin:
+            return game.hostUsername === username ? "Dein Zug 👊" : `${opponentUsername(game, username)}'s Zug ⌛️`;
+
+        case GameEventName.GamerMove:
+            return game.lastEvent.meta.username === username
+                ? `${opponentUsername(game, username)}'s Zug ⌛️`
+                : "Dein Zug 👊";
+
+        case GameEventName.GameEndWithWinner:
+            return game.lastEvent.meta.winnerUsername === username ? "Du hast gewonnen 🎉" : "Du hast verloren 👎";
+
+        case GameEventName.GameEndWithDraw:
+            return "Das Remis 🤷‍♂️";
+    }
+};
+
+export const opponentUsername = (game: Game, username: string) =>
+    game.hostUsername === username ? game.guestUsername : game.hostUsername;
