@@ -1,6 +1,6 @@
 const common = require("./webpack.common.js");
 const merge = require("webpack-merge");
-const { HashedModuleIdsPlugin } = require("webpack");
+const { DefinePlugin, HashedModuleIdsPlugin } = require("webpack");
 const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = merge(common, {
@@ -13,9 +13,12 @@ module.exports = merge(common, {
     },
 
     plugins: [
-        new HashedModuleIdsPlugin(),
         new CompressionPlugin({
             test: /\.js(\?.*)?$/i,
         }),
+        new DefinePlugin({
+            "process.env.SERVER_URL": process.env.SERVER_URL,
+        }),
+        new HashedModuleIdsPlugin(),
     ],
 });
