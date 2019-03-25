@@ -5,7 +5,7 @@ if (process.env.NODE_ENV) {
     checkEnvVariable("SERVER_URL");
 }
 
-export const ServerUrl = process.env.NODE_ENV ? process.env.SERVER_URL : "http://localhost";
+export const ServerUrl = process.env.NODE_ENV === "production" ? process.env.SERVER_URL : "http://localhost";
 
 export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "localhost:3002";
 
