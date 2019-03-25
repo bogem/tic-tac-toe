@@ -55,7 +55,7 @@ const UnenhancedPage = (props: PageProps) => {
 };
 
 const PageContainer = styled.main`
-    flex-grow: 1;
+    flex: 1 1 auto;
     height: 100vh;
     width: 100%;
 `;
@@ -64,7 +64,7 @@ const PageContent = styled.div`
     align-items: center;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1 1 auto;
     justify-content: center;
     margin-top: -50px;
     min-height: 100%;

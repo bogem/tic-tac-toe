@@ -124,7 +124,6 @@ export const GlobalStyle = createGlobalStyle`
 
     ol,
     ul {
-        margin: 1em 0;
         padding: 0 0 0 40px;
     }
     li {

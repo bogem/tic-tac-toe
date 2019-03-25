@@ -243,7 +243,7 @@ const UnstyledGameBoardCell = ({ childrenOnHover, children, className, disabled,
             className={className}
             onMouseOver={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={onClick}
+            onClick={disabled ? undefined : onClick}
             style={isHovered && !children && !disabled ? { color: "rgba(79, 79, 79, 0.5)" } : undefined}
         >
             {children || (isHovered && !disabled && childrenOnHover) || null}

@@ -60,6 +60,7 @@ const UnenhancedGamesOfMePage = ({ username }: GamesOfMePageProps) => {
 
 const GameUl = styled.ul`
     margin-bottom: 16px;
+    width: 100%;
 `;
 
 export const GamesOfMePage = connect(({ environment }: RootState) => ({
