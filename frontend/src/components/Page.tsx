@@ -18,6 +18,7 @@ interface PageOwnProps {
     children: React.ReactNode;
     isLoading?: boolean;
     public?: boolean;
+    style?: React.CSSProperties;
     title: string;
 }
 
@@ -48,7 +49,7 @@ const UnenhancedPage = (props: PageProps) => {
     return (
         <PageContainer>
             <NavBar />
-            <PageContent>{children}</PageContent>
+            <PageContent style={props.style}>{children}</PageContent>
         </PageContainer>
     );
 };
@@ -64,9 +65,10 @@ const PageContent = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: 100vh;
-    margin-top: -50px; /* height of navbar */
     justify-content: center;
+    margin-top: -50px;
+    min-height: 100%;
+    padding-top: 50px;
     width: 100%;
 `;
 
