@@ -1,3 +1,6 @@
+// The MIT License (MIT)
+// Copyright (c) 2017 David Hu
+//
 // BarLoader is a Typescript and styled-components implementation of https://github.com/davidhu2000/react-spinners/blob/master/src/BarLoader.jsx.
 // Author of original: David Hu.
 

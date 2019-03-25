@@ -1,7 +1,10 @@
-import { sample } from "lodash";
-
+// Apache License
+// Copyright 2013-2018 Docker, Inc.
+//
 // JS adaptation of docker container name generator.
 // Origin: https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go
+
+import { sample } from "lodash";
 
 const left = [
     "admiring",
