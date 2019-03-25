@@ -1,7 +1,7 @@
 import AWS from "aws-sdk";
 import { ClientConfiguration } from "aws-sdk/clients/dynamodb";
 
-import { DynamoDbUrl } from "../Urls";
+import { DynamoDbUrl } from "../../../common/Urls";
 
 const options: ClientConfiguration = {
     endpoint: DynamoDbUrl,
