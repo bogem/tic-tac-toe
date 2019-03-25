@@ -22,6 +22,7 @@ import {
     gameMakeMoveApiPathname,
     PagePathname,
 } from "../../../common/Urls";
+import { toast } from "react-toastify";
 
 interface GamePlayPageReduxProps {
     username: string | undefined;
@@ -29,7 +30,7 @@ interface GamePlayPageReduxProps {
 
 type GamePlayPageProps = GamePlayPageReduxProps & RouteComponentProps<{ gameId: string }>;
 
-const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
+const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps) => {
     const [game, setGame] = useState<Game | undefined>(undefined);
     const [gameBoard, setGameBoard] = useState<GameBoardType | undefined>(undefined);
 
@@ -64,7 +65,8 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
                 joinGame().then(listenToGameSocket);
             } else if (game.hostUsername !== username && game.guestUsername && game.guestUsername !== username) {
                 // Show error that there is a player already
-                alert("You can't join");
+                toast.error("Du darfst in diesem Spiel nicht teilnehmen");
+                history.push(PagePathname.Home + "#join-game");
             } else if (game.hostUsername === username || game.guestUsername === username) {
                 // If user is alreay a participant of game,
                 // then just fetch game board.

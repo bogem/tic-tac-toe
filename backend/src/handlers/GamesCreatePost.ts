@@ -8,6 +8,7 @@ import { GamesCreatePostResponseBody } from "../../../common/types/api/games/cre
 import { putGame } from "../models/Game";
 import { createAndPutInitialGameBoard } from "../models/GameBoard";
 import { newGameEventEmitter } from "../eventEmitters/NewGame";
+import { handleError } from "../utils/Errors";
 
 export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
     const body = req.body as GamesCreatePostRequestBody;
@@ -35,5 +36,7 @@ export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
 
         newGameEventEmitter.emitNewGame();
         res.send(gameId as GamesCreatePostResponseBody);
-    } catch (e) {}
+    } catch (error) {
+        handleError(error, res);
+    }
 };

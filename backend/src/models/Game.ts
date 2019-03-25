@@ -6,9 +6,11 @@ import { put, update } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
 import { TableName } from "../db/Tables";
 
+export const ERROR_GAME_IS_NOT_FOUND = new Error("Game is not found");
+
 // GETs
 
-export const getGame = (gameId: GameId): Promise<Game | undefined> =>
+export const getGame = (gameId: GameId): Promise<Game> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
@@ -18,8 +20,10 @@ export const getGame = (gameId: GameId): Promise<Game | undefined> =>
             (err, data) => {
                 if (err) {
                     reject(err);
+                } else if (!data.Item) {
+                    reject(ERROR_GAME_IS_NOT_FOUND);
                 } else {
-                    resolve(data.Item as Game | undefined);
+                    resolve(data.Item as Game);
                 }
             }
         );

@@ -7,6 +7,7 @@ import { getUsernameWithToken } from "../models/Token";
 import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
 import { GameId, GameEventName } from "../../../common/types/Game";
 import { gameEndEventEmitter } from "../eventEmitters/GameEnd";
+import { handleError } from "../utils/Errors";
 
 export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -22,19 +23,22 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
         const username = await getUsernameWithToken(token);
 
         if (!(await isUserInGame(gameId, username))) {
-            res.sendStatus(403);
+            res.status(403);
+            res.send("User is not in the game");
             return;
         }
 
         const gameBoard = await getGameBoard(gameId);
         if (!gameBoard) {
-            res.sendStatus(400);
+            res.status(400);
+            res.send("There is no game board with this id");
             return;
         }
 
         const cell = gameBoard[coords.row] && gameBoard[coords.row][coords.column];
         if (cell !== null) {
-            res.sendStatus(400);
+            res.status(400);
+            res.send("This cell already has item");
             return;
         }
 
@@ -56,6 +60,7 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
         }
 
         res.sendStatus(200);
-    } finally {
+    } catch (error) {
+        handleError(error, res);
     }
 };

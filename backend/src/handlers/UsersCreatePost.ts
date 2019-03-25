@@ -7,6 +7,7 @@ import {
 } from "../../../common/types/api/users/create/post/ResponseBody";
 import { generateAndSaveToken } from "../models/Token";
 import { putUser, doesUserExist } from "../models/User";
+import { handleError } from "../utils/Errors";
 
 export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
     const body = req.body as UsersCreatePostRequestBody;
@@ -26,8 +27,7 @@ export const UsersCreatePostHandler: RequestHandler = async (req, res) => {
         }
 
         res.json(body as UsersCreatePostResponseBody);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
+    } catch (error) {
+        handleError(error, res);
     }
 };

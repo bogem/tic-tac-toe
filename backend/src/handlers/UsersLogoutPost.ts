@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 
 import { deleteToken } from "../models/Token";
+import { handleError } from "../utils/Errors";
 
 export const UsersLogoutPostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -15,6 +16,7 @@ export const UsersLogoutPostHandler: RequestHandler = async (req, res) => {
         await deleteToken(token);
 
         res.sendStatus(200);
-    } finally {
+    } catch (error) {
+        handleError(error, res);
     }
 };

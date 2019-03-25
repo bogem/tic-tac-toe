@@ -7,6 +7,7 @@ import {
 } from "../../../common/types/api/users/login/post/ResponseBody";
 import { UsersLoginPostRequestBody } from "../../../common/types/api/users/login/post/RequestBody";
 import { checkPasswordCorrectness, doesUserExist } from "../models/User";
+import { handleError } from "../utils/Errors";
 
 export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
     const { username, password } = req.body as UsersLoginPostRequestBody;
@@ -31,8 +32,7 @@ export const UsersLoginPostHandler: RequestHandler = async (req, res) => {
         }
 
         res.json({ username } as UsersLoginPostResponseBody);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
+    } catch (error) {
+        handleError(error, res);
     }
 };

@@ -4,6 +4,7 @@ import { GameEventName, GameId } from "../../../common/types/Game";
 import { getUsernameWithToken } from "../models/Token";
 import { updateGameGuestUsername, updateGameLastEvent } from "../models/Game";
 import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
+import { handleError } from "../utils/Errors";
 
 export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
     const token = req.session && req.session.token;
@@ -24,5 +25,7 @@ export const GamesJoinPostHandler: RequestHandler = async (req, res) => {
         opponentJoinEventEmitter.emitOpponentJoin(gameId);
 
         res.sendStatus(200);
-    } catch (e) {}
+    } catch (error) {
+        handleError(error, res);
+    }
 };
