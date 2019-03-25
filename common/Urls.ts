@@ -23,6 +23,7 @@ export enum PagePathname {
     Login = "/login",
     Logout = "/logout",
     Home = "/home",
+    GamesOfMe = "/games/of_me",
 }
 
 export const gamesPlayPagePathname = (gameId: GameId | ":gameId") => `/games/${gameId}/play`;
