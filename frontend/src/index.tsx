@@ -1,6 +1,3 @@
-// Styles
-import "react-toastify/dist/ReactToastify.css";
-
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Grommet } from "grommet";
@@ -28,12 +25,10 @@ const App = () => (
 
                 <ToastContainer
                     autoClose={7 * 1000}
-                    className="toast-container"
                     closeOnClick={false}
                     draggable={false}
                     hideProgressBar={true}
                     position="bottom-left"
-                    toastClassName="toast"
                     transition={Slide}
                 />
 

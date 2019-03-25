@@ -191,28 +191,114 @@ export const GlobalStyle = createGlobalStyle`
 
     /* --- toast styles --- */
 
-    .toast {
-        background: #fff !important;
-        border-radius: 6px !important;
-        border: 1px solid #dadada !important;
-        box-shadow: 0 1px 7px 0 rgba(0, 0, 0, 0.2) !important;
+
+    /**
+       MIT License
+       Copyright (c) 2017 Fadi Khadra
+
+       Copied from https://github.com/fkhadra/react-toastify/blob/master/dist/ReactToastify.css.
+    */
+    .Toastify__toast-container {
+  color: #fff;
+    box-sizing: border-box;
+    padding: 4px;
+    position: fixed;
+    width: 320px;
+    z-index: 9999;
+  }
+    .Toastify__toast-container--bottom-left {
+        bottom: 1em;
+        left: 1em; }
+
+    @media only screen and (max-width: 480px) {
+    .Toastify__toast-container {
+        width: 100vw;
+        padding: 0;
+        left: 0;
+        margin: 0; }
+        .Toastify__toast-container--bottom-left { bottom: 0; }
+    }
+
+    .Toastify__toast {
+        background: #fff;
+        border-radius: 6px;
+        border: 1px solid #dadada;
+        box-shadow: 0 1px 7px 0 rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
         color: #3f3f3f !important;
+        cursor: pointer;
+        display: flex;
+        font-family: sans-serif;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        max-height: 800px;
+        min-height: 64px;
+        overflow: hidden;
         padding: 16px !important;
+        padding: 8px;
+        position: relative;
     }
-
-    .toast-container {
-        .Toastify__toast--error {
-            background: #fff !important;
-            color: #ff4040 !important;
-        }
-
-        .Toastify__toast--success {
-            background: #fff !important;
-            color: #00c781 !important;
-        }
-
-        .Toastify__close-button {
-            color: #3f3f3f !important;
-        }
+    .Toastify__toast--default {
+        background: #fff;
+        color: #aaa; }
+    .Toastify__toast--info {
+        background: #3498db; }
+    .Toastify__toast--success {
+        background: #fff;
+        color: #00c781;
     }
+    .Toastify__toast--warning {
+        background: #f1c40f; }
+    .Toastify__toast--error {
+        background: #fff;
+        color: #ff4040;
+     }
+    .Toastify__toast-body {
+        margin: auto 0;
+        -ms-flex: 1;
+            flex: 1; }
+
+    @media only screen and (max-width: 480px) {
+    .Toastify__toast {
+        margin-bottom: 0; } }
+
+    .Toastify__close-button {
+    color: #3f3f3f;
+    font-weight: bold;
+    font-size: 14px;
+    background: transparent;
+    outline: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: 0.3s ease;
+    -ms-flex-item-align: start;
+        align-self: flex-start; }
+    .Toastify__close-button--default {
+        color: #000;
+        opacity: 0.3; }
+    .Toastify__close-button:hover, .Toastify__close-button:focus {
+        opacity: 1; }
+
+    @keyframes Toastify__slideInLeft {
+    from {
+        transform: translate3d(-110%, 0, 0);
+        visibility: visible; }
+    to {
+        transform: translate3d(0, 0, 0); } }
+
+
+    @keyframes Toastify__slideOutLeft {
+    from {
+        transform: translate3d(0, 0, 0); }
+    to {
+        visibility: hidden;
+        transform: translate3d(-110%, 0, 0); } }
+
+    .Toastify__slide-enter--bottom-left {
+    animation-name: Toastify__slideInLeft; }
+
+    .Toastify__slide-exit--bottom-left {
+    animation-name: Toastify__slideOutLeft; }
 `;
