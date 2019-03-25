@@ -225,7 +225,7 @@ export const GlobalStyle = createGlobalStyle`
         border: 1px solid #dadada;
         box-shadow: 0 1px 7px 0 rgba(0, 0, 0, 0.2);
         box-sizing: border-box;
-        color: #3f3f3f !important;
+        color: #3f3f3f;
         cursor: pointer;
         display: flex;
         font-family: sans-serif;
@@ -234,8 +234,7 @@ export const GlobalStyle = createGlobalStyle`
         max-height: 800px;
         min-height: 64px;
         overflow: hidden;
-        padding: 16px !important;
-        padding: 8px;
+        padding: 16px;
         position: relative;
     }
     .Toastify__toast--default {

@@ -6,6 +6,9 @@ export const ApiServerUrl = `http://localhost:${ApiServerPort}`;
 export const SocketServerPort = 3002;
 export const SocketServerUrl = `http://localhost:${SocketServerPort}`;
 
+export const DynamoDbUrl =
+    process.env.NODE_ENV === "production" ? "dynamodb.eu-central-1.amazonaws.com" : "http://localhost:8080";
+
 export enum PagePathname {
     Root = "/",
     Login = "/login",

@@ -1,6 +1,13 @@
 import path from "path";
 
-import { ApiPathname, getGameApiPathname, gameJoinApiPathname, gameMakeMoveApiPathname } from "../../common/Urls";
+import {
+    ApiPathname,
+    getGameApiPathname,
+    gameJoinApiPathname,
+    gameMakeMoveApiPathname,
+    ApiServerPort,
+    SocketServerPort,
+} from "../../common/Urls";
 
 // Express import and use.
 import express from "express";
@@ -63,9 +70,9 @@ if (process.env.NODE_ENV === "production") {
     });
 }
 
-app.listen(3000, () => console.log("Express started"));
+app.listen(ApiServerPort, () => console.log("Express started"));
 
 runGamesListSocketNamespace(io);
 runGamesStateSocketNamespace(io);
 
-socketServer.listen(3002, () => console.log("Socket server started"));
+socketServer.listen(SocketServerPort, () => console.log("Socket server started"));
