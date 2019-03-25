@@ -2,6 +2,12 @@ import AWS from "aws-sdk";
 import { ClientConfiguration } from "aws-sdk/clients/dynamodb";
 
 import { DynamoDbUrl } from "../../../common/Urls";
+import { checkEnvVariable } from "../../../common/Env";
+
+if (process.env.NODE_ENV) {
+    checkEnvVariable("AWS_ACCESS_KEY_ID");
+    checkEnvVariable("AWS_SECRET_ACCESS_KEY");
+}
 
 const options: ClientConfiguration = {
     endpoint: DynamoDbUrl,

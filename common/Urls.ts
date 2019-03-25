@@ -1,12 +1,19 @@
 import { GameId } from "./types/Game";
+import { checkEnvVariable } from "./Env";
 
-export const ClientUrl = process.env.NODE_ENV === "production" ? "http://163.172.171.249" : "localhost:3002";
+if (process.env.NODE_ENV) {
+    checkEnvVariable("SERVER_URL");
+}
+
+export const ServerUrl = process.env.NODE_ENV ? process.env.SERVER_URL : "http://localhost";
+
+export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "localhost:3002";
 
 export const ApiServerPort = process.env.NODE_ENV === "production" ? 80 : 3000;
-export const ApiServerUrl = `http://localhost:${ApiServerPort}`;
+export const ApiServerUrl = `${ServerUrl}:${ApiServerPort}`;
 
 export const SocketServerPort = 3001;
-export const SocketServerUrl = `http://localhost:${SocketServerPort}`;
+export const SocketServerUrl = `${ServerUrl}:${SocketServerPort}`;
 
 export const DynamoDbUrl =
     process.env.NODE_ENV === "production" ? "dynamodb.eu-central-1.amazonaws.com" : "http://localhost:8080";
