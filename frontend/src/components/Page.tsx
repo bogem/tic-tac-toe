@@ -55,7 +55,7 @@ const UnenhancedPage = (props: PageProps) => {
 
 const PageContainer = styled.main`
     flex-grow: 1;
-    height: 100%;
+    height: 100vh;
     width: 100%;
 `;
 
@@ -64,7 +64,7 @@ const PageContent = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: 100%;
+    height: 100vh;
     margin-top: -50px; /* height of navbar */
     justify-content: center;
     width: 100%;
