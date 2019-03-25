@@ -1,6 +1,7 @@
 import { UsersCreatePostRequestBody } from "../types/api/users/create/post/RequestBody";
 import { put } from "../db/Fns";
 import { docClient } from "../db/Db";
+import { TableName } from "../db/Tables";
 
 // GETs
 
@@ -8,7 +9,7 @@ export const checkPasswordCorrectness = (username: string, password: string): Pr
     new Promise((resolve, reject) => {
         docClient.get(
             {
-                TableName: "Users",
+                TableName: TableName.Users,
                 ProjectionExpression: "username, password",
                 Key: { username },
             },
@@ -26,7 +27,7 @@ export const doesUserExist = (username: string): Promise<boolean> =>
     new Promise((resolve, reject) => {
         docClient.scan(
             {
-                TableName: "Users",
+                TableName: TableName.Users,
                 FilterExpression: "#u = :u",
                 ExpressionAttributeNames: { "#u": "username" },
                 ExpressionAttributeValues: { ":u": username },
@@ -43,4 +44,4 @@ export const doesUserExist = (username: string): Promise<boolean> =>
 
 // PUTs
 
-export const putUser = (user: UsersCreatePostRequestBody) => put({ TableName: "Users", Item: user });
+export const putUser = (user: UsersCreatePostRequestBody) => put({ TableName: TableName.Users, Item: user });

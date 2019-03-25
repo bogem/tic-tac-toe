@@ -1,8 +1,9 @@
+import React from "react";
 import { AxiosResponse, AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 import { RootDispatch } from "../rootStore/RootTypes";
-import { UsersEnvironmentGetResponseBody } from "../../../../common/types/api/users/environment/get/ResponseBody";
+import { UsersMeGetResponseBody } from "../../../../common/types/api/users/me/get/ResponseBody";
 import { UsersCreatePostRequestBody } from "../../../../common/types/api/users/create/post/RequestBody";
 import {
     UsersCreatePostResponseBody,
@@ -14,37 +15,42 @@ import {
 } from "../../../../common/types/api/users/login/post/ResponseBody";
 import { UsersLoginPostRequestBody } from "../../../../common/types/api/users/login/post/RequestBody";
 import { axios } from "../../utils/Api";
-import { environmentSetEnvironment } from "./EnvironmentActions";
+import { environmentSetMe } from "./EnvironmentActions";
+import { ApiPathname } from "../../../../common/Urls";
 
 export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
-    dispatch(environmentSetEnvironment("Loading"));
+    dispatch(environmentSetMe("Loading"));
 
     axios
-        .get("/api/users/environment")
-        .then((response: AxiosResponse<UsersEnvironmentGetResponseBody>) => {
-            dispatch(environmentSetEnvironment(response.data));
+        .get(ApiPathname.UsersMe)
+        .then((response: AxiosResponse<UsersMeGetResponseBody>) => {
+            dispatch(environmentSetMe(response.data));
         })
         .catch(error => {
             if (error.response && error.response.status === 404) {
-                dispatch(environmentSetEnvironment("Not Logged In"));
+                dispatch(environmentSetMe("Not Logged In"));
             }
         });
 };
 
 export const environmentLogin = (username: string, password: string) => (dispatch: RootDispatch) => {
-    dispatch(environmentSetEnvironment("Loading"));
+    dispatch(environmentSetMe("Loading"));
 
     return axios
-        .post("/api/users/login", { username, password } as UsersLoginPostRequestBody)
+        .post(ApiPathname.UsersLogin, { username, password } as UsersLoginPostRequestBody)
         .then((response: AxiosResponse<UsersLoginPostResponseBody>) => {
-            dispatch(environmentSetEnvironment(response.data));
+            dispatch(environmentSetMe(response.data));
 
-            toast(`Hi ${username}, du bist erfolgreich eingeloggt`);
+            toast(
+                <span>
+                    Hi <b>${username}</b>, du bist erfolgreich eingeloggt
+                </span>
+            );
 
             return response;
         })
         .catch((error: AxiosError) => {
-            dispatch(environmentSetEnvironment("Not Asked"));
+            dispatch(environmentSetMe("Not Asked"));
 
             if (error.response) {
                 const { status, data } = error.response;
@@ -61,19 +67,23 @@ export const environmentLogin = (username: string, password: string) => (dispatc
 };
 
 export const environmentRegister = (username: string, password: string) => (dispatch: RootDispatch) => {
-    dispatch(environmentSetEnvironment("Loading"));
+    dispatch(environmentSetMe("Loading"));
 
     return axios
-        .post("/api/users/create", { username, password } as UsersCreatePostRequestBody)
+        .post(ApiPathname.UsersCreate, { username, password } as UsersCreatePostRequestBody)
         .then((response: AxiosResponse<UsersCreatePostResponseBody>) => {
-            dispatch(environmentSetEnvironment(response.data));
+            dispatch(environmentSetMe(response.data));
 
-            toast(`Hi ${username}, du bist erfolgreich registriert`);
+            toast(
+                <span>
+                    Hi <b>${username}</b>, du bist erfolgreich registriert
+                </span>
+            );
 
             return response;
         })
         .catch((error: AxiosError) => {
-            dispatch(environmentSetEnvironment("Not Asked"));
+            dispatch(environmentSetMe("Not Asked"));
 
             if (
                 error.response &&

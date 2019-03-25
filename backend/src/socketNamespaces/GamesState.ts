@@ -1,28 +1,27 @@
 import { Server } from "socket.io";
 
 import {
-    GameRoomConnectEventData,
-    GamePlayEventName,
+    SubscribeToGameChangesEventData,
+    GameStateEventName,
     CurrentGameStateEventData,
-} from "../../../common/types/sockets/GamesPlay";
+} from "../../../common/types/sockets/GamesState";
 import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
 import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
-import { GameId } from "../../../common/types/Game";
-import { getGame } from "../models/Game";
+import { GameId } from "../types/Game";
+import { getGame, isUserInGame } from "../models/Game";
 import { getGameBoard } from "../models/GameBoard";
 import { gameEndEventEmitter } from "../eventEmitters/GameEnd";
+import { SocketNamespacePathname } from "../../../common/Urls";
 
-export const runGamesPlaySocketNamespace = (io: Server) => {
-    const namespace = io.of("/games/play");
-    const rooms: GameId[] = [];
+export const runGamesStateSocketNamespace = (io: Server) => {
+    const namespace = io.of(SocketNamespacePathname.GamesState);
 
-    const emitCurrentGameState = (gameId: GameId) => {
+    const emitCurrentGameState = (gameId: GameId) =>
         Promise.all([getGame(gameId), getGameBoard(gameId)]).then(([game, gameBoard]) => {
             namespace
                 .to(gameId)
-                .emit(GamePlayEventName.CurrentGameState, { game, gameBoard } as CurrentGameStateEventData);
+                .emit(GameStateEventName.CurrentGameState, { game, gameBoard } as CurrentGameStateEventData);
         });
-    };
 
     const subscribeToOpponentJoin = () => {
         opponentJoinEventEmitter.onOpponentJoin(gameId => {
@@ -44,17 +43,16 @@ export const runGamesPlaySocketNamespace = (io: Server) => {
 
     const runNamespace = () => {
         namespace.on("connection", socket => {
-            socket.on(GamePlayEventName.GameRoomConnect, ({ gameId, username }: GameRoomConnectEventData) => {
-                username; // check if user joined the game and can connect to room.
-
-                if (!rooms.includes(gameId)) {
-                    rooms.push(gameId);
+            socket.on(
+                GameStateEventName.SubscribeToGameStateChanges,
+                ({ gameId, username }: SubscribeToGameChangesEventData) => {
+                    if (isUserInGame(gameId, username)) {
+                        socket.join(gameId, () => {
+                            emitCurrentGameState(gameId);
+                        });
+                    }
                 }
-
-                socket.join(gameId, () => {
-                    emitCurrentGameState(gameId);
-                });
-            });
+            );
         });
     };
 

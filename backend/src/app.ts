@@ -1,5 +1,7 @@
 import path from "path";
 
+import { ApiPathname, getGameApiPathname, gameJoinApiPathname, gameMakeMoveApiPathname } from "../../common/Urls";
+
 // Express import and use.
 import express from "express";
 const app = express();
@@ -17,17 +19,17 @@ const io = socketIo(socketServer);
 
 // Express handlers.
 import { UsersCreatePostHandler } from "./handlers/UsersCreatePost";
-import { UsersEnvironmentGetHandler } from "./handlers/UsersEnvironmentGet";
+import { UsersMeGetHandler } from "./handlers/UsersMeGet";
 import { UsersLoginPostHandler } from "./handlers/UsersLoginPost";
 import { GamesCreatePostHandler } from "./handlers/GamesCreatePost";
 import { GamesJoinPostHandler } from "./handlers/GamesJoinPost";
-import { GamesInfoGetHandler } from "./handlers/GamesInfoGet";
+import { GamesGetHandler } from "./handlers/GamesGet";
 import { GamesMakeMovePostHandler } from "./handlers/GamesMakeMovePost";
 import { UsersLogoutPostHandler } from "./handlers/UsersLogoutPost";
 
 // Socket.IO namespaces.
 import { runGamesListSocketNamespace } from "./socketNamespaces/GamesList";
-import { runGamesPlaySocketNamespace } from "./socketNamespaces/GamesPlay";
+import { runGamesStateSocketNamespace } from "./socketNamespaces/GamesState";
 
 app.use(
     cors({ credentials: true, origin: "http://localhost:3001" }),
@@ -35,15 +37,15 @@ app.use(
     cookieSession({ name: "tic-tac-toe", keys: ["12345"] })
 );
 
-app.post("/api/users/create", UsersCreatePostHandler);
-app.post("/api/users/login", UsersLoginPostHandler);
-app.get("/api/users/environment", UsersEnvironmentGetHandler);
-app.post("/api/users/logout", UsersLogoutPostHandler);
+app.post(ApiPathname.UsersCreate, UsersCreatePostHandler);
+app.post(ApiPathname.UsersLogin, UsersLoginPostHandler);
+app.get(ApiPathname.UsersMe, UsersMeGetHandler);
+app.post(ApiPathname.UsersLogout, UsersLogoutPostHandler);
 
-app.post("/api/games/create", GamesCreatePostHandler);
-app.get("/api/games/:gameId/info", GamesInfoGetHandler);
-app.post("/api/games/:gameId/join", GamesJoinPostHandler);
-app.post("/api/games/:gameId/make_move", GamesMakeMovePostHandler);
+app.post(ApiPathname.GamesCreate, GamesCreatePostHandler);
+app.get(getGameApiPathname(":gameId"), GamesGetHandler);
+app.post(gameJoinApiPathname(":gameId"), GamesJoinPostHandler);
+app.post(gameMakeMoveApiPathname(":gameId"), GamesMakeMovePostHandler);
 
 if (process.env.NODE_ENV === "production") {
     const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
@@ -58,6 +60,6 @@ if (process.env.NODE_ENV === "production") {
 app.listen(3000, () => console.log("Express started"));
 
 runGamesListSocketNamespace(io);
-runGamesPlaySocketNamespace(io);
+runGamesStateSocketNamespace(io);
 
 socketServer.listen(3002, () => console.log("Socket server started"));

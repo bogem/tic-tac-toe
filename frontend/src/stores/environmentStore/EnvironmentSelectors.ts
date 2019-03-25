@@ -1,5 +1,5 @@
-import { Environment } from "./EnvironmentTypes";
+import { Me } from "./EnvironmentTypes";
 import { isResponseSuccessBody } from "../../utils/Api";
 
-export const getIsLoggedIn = (environment: Environment) =>
+export const getIsLoggedIn = (environment: Me) =>
     environment === "Not Logged In" ? false : isResponseSuccessBody(environment) || undefined;

@@ -4,6 +4,7 @@ import { GameBoard, GameBoardCoords } from "../../../common/types/GameBoard";
 import { GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
 import { put, update } from "../db/Fns";
+import { TableName } from "../db/Tables";
 
 // GETs
 
@@ -11,7 +12,7 @@ export const getGameBoard = (gameId: GameId): Promise<GameBoard | undefined> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
-                TableName: "GameBoards",
+                TableName: TableName.GameBoards,
                 Key: { gameId },
             },
             (err, data) => {
@@ -107,14 +108,14 @@ export const isFieldFull = (gameBoard: GameBoard) => gameBoard.every(row => row.
 export const createAndPutInitialGameBoard = (gameId: GameId, size: number) => {
     const board: GameBoard = Array(size).fill(Array(size).fill(null));
 
-    return put({ TableName: "GameBoards", Item: { gameId, board } });
+    return put({ TableName: TableName.GameBoards, Item: { gameId, board } });
 };
 
 // UPDATEs
 
 export const updateGameBoard = (gameId: GameId, gameBoard: GameBoard) =>
     update({
-        TableName: "GameBoards",
+        TableName: TableName.GameBoards,
         Key: { gameId },
         UpdateExpression: "set #b = :b",
         ExpressionAttributeNames: { "#b": "board" },

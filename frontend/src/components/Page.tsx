@@ -71,6 +71,6 @@ const BarLoaderContainer = styled.div`
 
 export const Page = withRouter<PageOwnProps & RouteComponentProps>(
     connect((rootState: RootState) => ({
-        isLoggedIn: getIsLoggedIn(rootState.environment.environment),
+        isLoggedIn: getIsLoggedIn(rootState.environment.me),
     }))(UnenhancedPage)
 );

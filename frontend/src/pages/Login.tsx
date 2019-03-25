@@ -9,6 +9,7 @@ import { environmentRegister, environmentLogin } from "../stores/environmentStor
 import { RootDispatch, RootState } from "../stores/rootStore/RootTypes";
 import { RouteComponentProps } from "react-router";
 import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
+import { PagePathname } from "../../../common/Urls";
 
 interface LoginPageReduxProps {
     isLoading: boolean;
@@ -22,7 +23,7 @@ type LoginPageProps = LoginPageReduxProps & RouteComponentProps;
 const UnenhancedLoginPage = (props: LoginPageProps) => {
     useEffect(() => {
         if (props.isLoggedIn) {
-            props.history.push("/home");
+            props.history.push(PagePathname.Home);
         }
     });
 
@@ -101,8 +102,8 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
 
 export const LoginPage = connect(
     ({ environment }: RootState) => ({
-        isLoading: environment.environment === "Loading",
-        isLoggedIn: getIsLoggedIn(environment.environment),
+        isLoading: environment.me === "Loading",
+        isLoggedIn: getIsLoggedIn(environment.me),
     }),
     (dispatch: RootDispatch) => ({
         login: (username: string, password: string) => dispatch(environmentLogin(username, password)),

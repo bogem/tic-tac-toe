@@ -1,6 +1,6 @@
-import { UsersEnvironmentGetResponseBody } from "../../environment/get/ResponseBody";
+import { UsersMeGetResponseBody } from "../../me/get/ResponseBody";
 
-export type UsersLoginPostResponseBody = UsersEnvironmentGetResponseBody;
+export type UsersLoginPostResponseBody = UsersMeGetResponseBody;
 
 export enum UsersLoginPostErrorMessage {
     NonexistentUser = "NonexistentUser",

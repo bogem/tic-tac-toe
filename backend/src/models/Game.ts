@@ -1,8 +1,10 @@
+import { sortBy } from "lodash";
+
 import { GameEvent, Game, GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
 import { put, update } from "../db/Fns";
 import { GameEventName } from "../../../common/types/Game";
-import { sortBy } from "lodash";
+import { TableName } from "../db/Tables";
 
 // GETs
 
@@ -10,7 +12,7 @@ export const getGame = (gameId: GameId): Promise<Game | undefined> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
-                TableName: "Games",
+                TableName: TableName.Games,
                 Key: { id: gameId },
             },
             (err, data) => {
@@ -27,7 +29,7 @@ export const isUserInGame = (gameId: GameId, username: string): Promise<boolean>
     new Promise((resolve, reject) => {
         docClient.get(
             {
-                TableName: "Games",
+                TableName: TableName.Games,
                 Key: { id: gameId },
             },
             (err, data) => {
@@ -41,11 +43,11 @@ export const isUserInGame = (gameId: GameId, username: string): Promise<boolean>
         );
     });
 
-export const scanJustCreatedGames = (): Promise<Game[]> =>
+export const scanOnlyCreatedGames = (): Promise<Game[]> =>
     new Promise((resolve, reject) => {
         docClient.scan(
             {
-                TableName: "Games",
+                TableName: TableName.Games,
                 FilterExpression: "#le.#n = :n",
                 ExpressionAttributeNames: {
                     "#le": "lastEvent",
@@ -71,13 +73,13 @@ export const scanJustCreatedGames = (): Promise<Game[]> =>
 
 // PUTs
 
-export const putGame = (game: Game) => put({ TableName: "Games", Item: game });
+export const putGame = (game: Game) => put({ TableName: TableName.Games, Item: game });
 
 // UPDATEs
 
 export const updateGameGuestUsername = (gameId: GameId, guestUsername: string) =>
     update({
-        TableName: "Games",
+        TableName: TableName.Games,
         Key: { id: gameId },
         UpdateExpression: "set #gu = :gu",
         ExpressionAttributeNames: { "#gu": "guestUsername" },
@@ -86,7 +88,7 @@ export const updateGameGuestUsername = (gameId: GameId, guestUsername: string) =
 
 export const updateGameLastEvent = (gameId: GameId, event: GameEvent) =>
     update({
-        TableName: "Games",
+        TableName: TableName.Games,
         Key: { id: gameId },
         UpdateExpression: "set #e = :e",
         ExpressionAttributeNames: { "#e": "lastEvent" },

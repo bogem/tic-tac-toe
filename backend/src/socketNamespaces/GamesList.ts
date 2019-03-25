@@ -3,11 +3,12 @@ import { Server } from "socket.io";
 import { Game } from "../../../common/types/Game";
 import { GamesListEventName } from "../../../common/types/sockets/GamesList";
 import { newGameEventEmitter } from "../eventEmitters/NewGame";
-import { scanJustCreatedGames as scanOnlyCreatedGames } from "../models/Game";
+import { scanOnlyCreatedGames } from "../models/Game";
 import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
+import { SocketNamespacePathname } from "../../../common/Urls";
 
 export const runGamesListSocketNamespace = (io: Server) => {
-    const gamesListNamespace = io.of("/games/list");
+    const gamesListNamespace = io.of(SocketNamespacePathname.GamesList);
 
     let gamesList: Game[] = [];
     const setGamesList = (games: Game[]) => (gamesList = games);

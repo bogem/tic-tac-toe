@@ -2,6 +2,7 @@ import uuid = require("uuid/v4");
 
 import { docClient } from "../db/Db";
 import { put, onlyErrDocClientCallback } from "../db/Fns";
+import { TableName } from "../db/Tables";
 
 export const ERROR_NO_USERNAME_FOUND = new Error("No username found");
 
@@ -9,7 +10,7 @@ export const ERROR_NO_USERNAME_FOUND = new Error("No username found");
 
 export const deleteToken = (token: string): Promise<void> =>
     new Promise((resolve, reject) => {
-        docClient.delete({ TableName: "Tokens", Key: { token } }, onlyErrDocClientCallback(resolve, reject));
+        docClient.delete({ TableName: TableName.Tokens, Key: { token } }, onlyErrDocClientCallback(resolve, reject));
     });
 
 // GETs
@@ -18,7 +19,7 @@ export const getUsernameWithToken = (token: string): Promise<string> =>
     new Promise((resolve, reject) => {
         docClient.get(
             {
-                TableName: "Tokens",
+                TableName: TableName.Tokens,
                 ProjectionExpression: "username",
                 Key: { token },
             },
@@ -40,6 +41,6 @@ export const getUsernameWithToken = (token: string): Promise<string> =>
 
 export const generateAndSaveToken = async (username: string): Promise<string> => {
     const token = uuid();
-    await put({ TableName: "Tokens", Item: { token, username } });
+    await put({ TableName: TableName.Tokens, Item: { token, username } });
     return token;
 };

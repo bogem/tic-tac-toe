@@ -1,5 +1,5 @@
 import { createStandardAction } from "typesafe-actions";
 
-import { Environment } from "./EnvironmentTypes";
+import { Me } from "./EnvironmentTypes";
 
-export const environmentSetEnvironment = createStandardAction("ENVIRONMENT/SET_ENVIRONMENT")<Environment>();
+export const environmentSetMe = createStandardAction("ENVIRONMENT/SET_ME")<Me>();

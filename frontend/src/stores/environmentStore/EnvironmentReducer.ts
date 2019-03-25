@@ -9,8 +9,8 @@ export const environmentReducer = (
     action: EnvironmentAction
 ): EnvironmentState => {
     switch (action.type) {
-        case getType(actions.environmentSetEnvironment):
-            return { environment: action.payload };
+        case getType(actions.environmentSetMe):
+            return { me: action.payload };
     }
 
     return state;

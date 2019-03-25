@@ -815,9 +815,9 @@ const right = [
     "zhukovsky",
 ];
 
-// getRandomName generates a random name from the list of adjectives and surnames in this package
+// Generates a random name from the list of adjectives and surnames in this package
 // formatted as "adjective_surname". For example 'focused_turing'.
-export const getRandomName = () => {
+export const randomName = () => {
     let name = "";
 
     do {

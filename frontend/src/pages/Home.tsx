@@ -24,15 +24,22 @@ import { GamesCreatePostResponseBody } from "../../../common/types/api/games/cre
 import { GamesCreatePostRequestBody } from "../../../common/types/api/games/create/post/RequestBody";
 import { GamesListEventName, GamesListEventData } from "../../../common/types/sockets/GamesList";
 import { Page } from "../components/Page";
-import { getRandomName } from "../utils/GetRandomName";
+import { randomName } from "../utils/RandomName";
 import { axios } from "../utils/Api";
 import { Game, GameId } from "../../../common/types/Game";
+import {
+    SocketServerUrl,
+    SocketNamespacePathname,
+    PagePathname,
+    gamesPlayPagePathname,
+    ApiPathname,
+} from "../../../common/Urls";
 
 export const HomePage = ({ location, history }: RouteComponentProps) => {
     const [games, setGames] = useState<Game[]>([]);
 
     useEffect(() => {
-        const socket = socketIo("http://localhost:3002/games/list");
+        const socket = socketIo(SocketServerUrl + SocketNamespacePathname.GamesList);
         socket.on(GamesListEventName, (games: GamesListEventData) => setGames(games));
 
         return () => {
@@ -56,13 +63,13 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             </Box>
             {location.hash === "#create-game" && (
                 <CreateGameModal
-                    goToGamePlayPage={(gameId: GameId) => history.push(`/games/${gameId}/play`)}
+                    goToGamePlayPage={gameId => history.push(gamesPlayPagePathname(gameId))}
                     onClose={closeModal}
                 />
             )}
 
             <Box margin={{ bottom: "16px" }}>
-                <RoutedAnchor color="status-critical" path="/logout">
+                <RoutedAnchor color="status-critical" path={PagePathname.Logout}>
                     Logout
                 </RoutedAnchor>
             </Box>
@@ -94,7 +101,7 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
                         {games.map(game => (
                             <TableRow>
                                 <TableCell scope="row">
-                                    <RoutedAnchor path={`/games/${game.id}/play`}>{game.name}</RoutedAnchor>
+                                    <RoutedAnchor path={gamesPlayPagePathname(game.id)}>{game.name}</RoutedAnchor>
                                 </TableCell>
                                 <TableCell>{game.hostUsername}</TableCell>
                                 <TableCell>
@@ -117,10 +124,10 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
     <Layer onClickOutside={onClose} onEsc={onClose} responsive={false}>
         <Box pad="medium">
             <Formik
-                initialValues={{ name: getRandomName(), size: 3 } as GamesCreatePostRequestBody}
+                initialValues={{ name: randomName(), size: 3 } as GamesCreatePostRequestBody}
                 onSubmit={values => {
                     axios
-                        .post("/api/games/create", values)
+                        .post(ApiPathname.GamesCreate, values)
                         .then((response: AxiosResponse<GamesCreatePostResponseBody>) => {
                             goToGamePlayPage(response.data);
                         });

@@ -5,7 +5,8 @@ import { RouteComponentProps } from "react-router";
 import { Page } from "../components/Page";
 import { axios } from "../utils/Api";
 import { RootDispatch } from "../stores/rootStore/RootTypes";
-import { environmentSetEnvironment } from "../stores/environmentStore/EnvironmentActions";
+import { environmentSetMe } from "../stores/environmentStore/EnvironmentActions";
+import { ApiPathname, PagePathname } from "../../../common/Urls";
 
 interface LogoutPageReduxProps {
     logout: () => void;
@@ -27,9 +28,9 @@ export const LogoutPage = connect(
     null,
     (dispatch: RootDispatch, ownProps: RouteComponentProps) => ({
         logout() {
-            axios.post("/api/users/logout").then(() => {
-                dispatch(environmentSetEnvironment("Not Logged In"));
-                ownProps.history.push("/login");
+            axios.post(ApiPathname.UsersLogout).then(() => {
+                dispatch(environmentSetMe("Not Logged In"));
+                ownProps.history.push(PagePathname.Login);
             });
         },
     })

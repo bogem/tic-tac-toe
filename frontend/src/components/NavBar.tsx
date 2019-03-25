@@ -54,8 +54,8 @@ const NavBarContent = styled.nav`
 export const NavBar = withRouter(
     connect(({ environment }: RootState) => ({
         username:
-            environment.environment !== "Not Logged In" && isResponseSuccessBody(environment.environment)
-                ? environment.environment.username
+            environment.me !== "Not Logged In" && isResponseSuccessBody(environment.me)
+                ? environment.me.username
                 : undefined,
     }))(UnenhancedNavBar)
 );

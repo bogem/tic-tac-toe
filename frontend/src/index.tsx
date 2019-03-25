@@ -18,6 +18,7 @@ import { RootPage } from "./pages/Root";
 import { GamePlayPage } from "./pages/GamePlay";
 import { NavBar } from "./components/NavBar";
 import { LogoutPage } from "./pages/Logout";
+import { PagePathname, gamesPlayPagePathname } from "../../common/Urls";
 
 const App = () => (
     <BrowserRouter>
@@ -41,11 +42,11 @@ const App = () => (
                 <NavBar />
 
                 <Switch>
-                    <Route path="/" exact component={RootPage} />
-                    <Route path="/login" component={LoginPage} />
-                    <Route path="/logout" component={LogoutPage} />
-                    <Route path="/home" component={HomePage} />
-                    <Route path="/games/:gameId/play" component={GamePlayPage} />
+                    <Route path={PagePathname.Root} exact component={RootPage} />
+                    <Route path={PagePathname.Login} component={LoginPage} />
+                    <Route path={PagePathname.Logout} component={LogoutPage} />
+                    <Route path={PagePathname.Home} component={HomePage} />
+                    <Route path={gamesPlayPagePathname(":gameId")} component={GamePlayPage} />
                     <Route path="/" component={() => <h1>404 Page Not Found</h1>} />
                 </Switch>
             </Grommet>

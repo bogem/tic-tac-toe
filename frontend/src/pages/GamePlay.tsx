@@ -7,13 +7,21 @@ import { connect } from "react-redux";
 import socketIo from "socket.io-client";
 
 import { Page } from "../components/Page";
-import { GamesInfoGetResponseBody } from "../../../common/types/api/games/info/get/ResponseBody";
+import { GamesGetResponseBody } from "../../../common/types/api/games/get/ResponseBody";
 import { axios, isResponseSuccessBody } from "../utils/Api";
 import { GameEventName, Game } from "../../../common/types/Game";
 import { GameBoard as GameBoardType, GameBoardCoords } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
-import { CurrentGameStateEventData, GamePlayEventName } from "../../../common/types/sockets/GamesPlay";
+import { CurrentGameStateEventData, GameStateEventName } from "../../../common/types/sockets/GamesState";
 import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
+import {
+    SocketServerUrl,
+    SocketNamespacePathname,
+    getGameApiPathname,
+    gameJoinApiPathname,
+    gameMakeMoveApiPathname,
+    PagePathname,
+} from "../../../common/Urls";
 
 interface GamePlayPageReduxProps {
     username: string | undefined;
@@ -22,7 +30,7 @@ interface GamePlayPageReduxProps {
 type GamePlayPageProps = GamePlayPageReduxProps & RouteComponentProps<{ gameId: string }>;
 
 const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
-    const [gameInfo, setGameInfo] = useState<Game | undefined>(undefined);
+    const [game, setGame] = useState<Game | undefined>(undefined);
     const [gameBoard, setGameBoard] = useState<GameBoardType | undefined>(undefined);
 
     const { gameId } = match.params;
@@ -33,22 +41,22 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
             return;
         }
 
-        const fetchGameInfo = (): AxiosPromise<GamesInfoGetResponseBody> => axios.get(`/api/games/${gameId}/info`);
-        const joinGame = () => axios.post(`/api/games/${gameId}/join`);
+        const fetchGame = (): AxiosPromise<GamesGetResponseBody> => axios.get(getGameApiPathname(gameId));
+        const joinGame = () => axios.post(gameJoinApiPathname(gameId));
         const listenToGameSocket = () => {
-            socket = socketIo("http://localhost:3002/games/play");
-            socket.emit(GamePlayEventName.GameRoomConnect, { gameId, username });
+            socket = socketIo(SocketServerUrl + SocketNamespacePathname.GamesState);
+            socket.emit(GameStateEventName.SubscribeToGameStateChanges, { gameId, username });
 
-            socket.on(GamePlayEventName.CurrentGameState, (data: CurrentGameStateEventData) => {
-                setGameInfo(data.game);
+            socket.on(GameStateEventName.CurrentGameState, (data: CurrentGameStateEventData) => {
+                setGame(data.game);
                 setGameBoard(data.gameBoard);
             });
         };
 
-        fetchGameInfo().then(response => {
+        fetchGame().then(response => {
             const game = response.data;
 
-            setGameInfo(game);
+            setGame(game);
 
             if (game.hostUsername !== username && !game.guestUsername) {
                 // If current user is not the host and there is no guest in the game,
@@ -83,29 +91,28 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
         newGameBoard[row] = newGameBoardRow;
 
         setGameBoard(newGameBoard);
-        axios.post(`/api/games/${gameId}/make_move`, { coords: { row, column } } as GamesMakeMoveRequestBody);
+        axios.post(gameMakeMoveApiPathname(gameId), { coords: { row, column } } as GamesMakeMoveRequestBody);
     };
 
     const isGameBoardEnabled =
-        gameInfo &&
-        ((gameInfo.lastEvent.name === GameEventName.OpponentJoin && gameInfo.hostUsername === username) ||
-            (gameInfo.lastEvent.name === GameEventName.GamerMove && gameInfo.lastEvent.meta.username !== username));
+        game &&
+        ((game.lastEvent.name === GameEventName.OpponentJoin && game.hostUsername === username) ||
+            (game.lastEvent.name === GameEventName.GamerMove && game.lastEvent.meta.username !== username));
 
     const isGameEnd =
-        gameInfo &&
-        (gameInfo.lastEvent.name === GameEventName.GameEndWithDraw ||
-            gameInfo.lastEvent.name === GameEventName.GameEndWithWinner);
+        game &&
+        (game.lastEvent.name === GameEventName.GameEndWithDraw ||
+            game.lastEvent.name === GameEventName.GameEndWithWinner);
 
-    const opponentUsername =
-        gameInfo && (gameInfo.hostUsername === username ? gameInfo.guestUsername : gameInfo.hostUsername);
+    const opponentUsername = game && (game.hostUsername === username ? game.guestUsername : game.hostUsername);
 
     return (
         <Page isLoading={username === undefined} title="Spielen">
-            {gameInfo && (
+            {game && (
                 <>
                     <Box margin={{ bottom: "16px" }}>
                         <Text textAlign="center" weight="bold">
-                            {gameInfo.name}
+                            {game.name}
                         </Text>
 
                         {opponentUsername && (
@@ -116,42 +123,42 @@ const UnenhancedGamePlayPage = ({ match, username }: GamePlayPageProps) => {
                     </Box>
 
                     <Text margin={{ bottom: "24px" }} size="xlarge" textAlign="center" weight="bold">
-                        {gameTitle(gameInfo, username!, opponentUsername!)}
+                        {gameTitle(game, username!, opponentUsername!)}
                     </Text>
                 </>
             )}
 
-            {gameBoard && gameInfo && gameInfo.guestUsername && (
+            {gameBoard && game && game.guestUsername && (
                 <Box margin={{ bottom: "24px" }}>
                     <GameBoard
                         gameBoard={gameBoard}
-                        guestUsername={gameInfo.guestUsername}
+                        guestUsername={game.guestUsername}
                         disabled={!isGameBoardEnabled}
-                        hostUsername={gameInfo.hostUsername}
+                        hostUsername={game.hostUsername}
                         isUserWon={
-                            gameInfo.lastEvent.name === GameEventName.GameEndWithWinner &&
-                            gameInfo.lastEvent.meta.winnerUsername === username!
+                            game.lastEvent.name === GameEventName.GameEndWithWinner &&
+                            game.lastEvent.meta.winnerUsername === username!
                         }
                         onCellClick={makeMove}
                         username={username!}
                         winCoords={
-                            (gameInfo.lastEvent.name === GameEventName.GameEndWithWinner &&
-                                gameInfo.lastEvent.meta.winCoords) ||
+                            (game.lastEvent.name === GameEventName.GameEndWithWinner &&
+                                game.lastEvent.meta.winCoords) ||
                             undefined
                         }
                     />
                 </Box>
             )}
 
-            {isGameEnd && <RoutedAnchor path="/home">Zurück zu Home</RoutedAnchor>}
+            {isGameEnd && <RoutedAnchor path={PagePathname.Home}>Zurück zu Home</RoutedAnchor>}
         </Page>
     );
 };
 
 export const GamePlayPage = connect(({ environment }: RootState) => ({
     username:
-        environment.environment !== "Not Logged In" && isResponseSuccessBody(environment.environment)
-            ? environment.environment.username
+        environment.me !== "Not Logged In" && isResponseSuccessBody(environment.me)
+            ? environment.me.username
             : undefined,
 }))(UnenhancedGamePlayPage);
 
