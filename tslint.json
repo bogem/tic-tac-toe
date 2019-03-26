@@ -1,0 +1,37 @@
+{
+    "defaultSeverity": "error",
+    "extends": ["tslint-config-airbnb", "tslint-react-hooks"],
+    "jsRules": {},
+    "rules": {
+        "align": false,
+        "curly": true,
+        "import-name": false,
+        "indent": false,
+        "max-line-length": false,
+        "no-increment-decrement": false,
+        "no-else-after-return": [true, "allow-else-if"],
+        "one-variable-per-declaration": [false],
+        "prefer-template": false,
+        "quotemark": {
+            "options": [
+                "double",
+                "jsx-double",
+                "avoid-escape",
+                "avoid-template"
+            ]
+        },
+        "react-hooks-nesting": "error",
+        "semicolon": [true, "always", "ignore-bound-class-methods"],
+        "ter-arrow-parens": [
+            true,
+            "always",
+            {
+                "requireForBlockBody": false
+            }
+        ],
+        "ter-indent": false,
+        "trailing-comma": false,
+        "variable-name": [true, "allow-pascal-case"]
+    },
+    "rulesDirectory": []
+}
