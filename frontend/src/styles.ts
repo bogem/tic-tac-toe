@@ -47,17 +47,6 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     /**
-    * 1. Add the correct box sizing in Firefox.
-    * 2. Show the overflow in Edge and IE.
-    */
-
-    hr {
-        box-sizing: content-box; /* 1 */
-        height: 0; /* 1 */
-        overflow: visible; /* 2 */
-    }
-
-    /**
     * Show the overflow in Edge.
     */
     button,
@@ -91,30 +80,6 @@ export const GlobalStyle = createGlobalStyle`
         height: auto;
     }
 
-    /**
-    * 1. Correct the odd appearance in Chrome and Safari.
-    * 2. Correct the outline style in Safari.
-    */
-    [type="search"] {
-        -webkit-appearance: textfield; /* 1 */
-        outline-offset: -2px; /* 2 */
-    }
-    /**
-    * Remove the inner padding in Chrome and Safari on macOS.
-    */
-    [type="search"]::-webkit-search-decoration {
-        -webkit-appearance: none;
-    }
-
-    /**
-    * 1. Correct the inability to style clickable types in iOS and Safari.
-    * 2. Change font properties to "inherit" in Safari.
-    */
-    ::-webkit-file-upload-button {
-        -webkit-appearance: button; /* 1 */
-        font: inherit; /* 2 */
-    }
-
     /* --- reset.css --- */
 
     /* http://meyerweb.com/eric/tools/css/reset/
@@ -130,11 +95,6 @@ export const GlobalStyle = createGlobalStyle`
         display: list-item;
     }
 
-    blockquote:before,
-    blockquote:after {
-        content: "";
-        content: none;
-    }
     table {
         border-collapse: collapse;
         border-spacing: 0;
