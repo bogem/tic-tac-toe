@@ -29,6 +29,7 @@ const App = () => (
                     closeOnClick={false}
                     draggable={false}
                     hideProgressBar={true}
+                    pauseOnFocusLoss={false}
                     position="bottom-left"
                     transition={Slide}
                 />
