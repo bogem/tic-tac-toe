@@ -9,7 +9,7 @@ export const ServerUrl = process.env.NODE_ENV === "production" ? process.env.SER
 
 export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "http://localhost:3002";
 
-export const ApiServerPort = process.env.NODE_ENV === "production" ? 80 : 3000;
+export const ApiServerPort = process.env.NODE_ENV === "production" ? 443 : 3000;
 export const ApiServerUrl = `${ServerUrl}:${ApiServerPort}`;
 
 export const SocketServerPort = 3001;

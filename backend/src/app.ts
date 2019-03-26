@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 
 import {
@@ -61,17 +62,34 @@ if (process.env.NODE_ENV === "production") {
     const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
 
     app.get("*.js", function(req, res) {
-        res.set("Content-Encoding", "gzip");
         res.set("Content-Type", "text/javascript");
-        res.sendFile(path.join(frontendDistDir, req.url + ".gz"));
+
+        const filePath = path.join(frontendDistDir, req.url);
+        const compressedFilePath = filePath + ".gz";
+
+        if (fs.existsSync(compressedFilePath)) {
+            res.set("Content-Encoding", "gzip");
+            res.sendFile(compressedFilePath);
+        } else {
+            res.sendFile(filePath);
+        }
     });
 
     app.get("*", (_, res) => {
         res.sendFile(path.join(frontendDistDir, "index.html"));
     });
-}
 
-app.listen(ApiServerPort, () => console.log("Express started"));
+    require("greenlock-express")
+        .create({
+            app,
+            email: "albernigma@gmail.com",
+            agreeTos: true,
+            configDir: "~/.config/acme/",
+        })
+        .listen(80, 443);
+} else {
+    app.listen(ApiServerPort, () => console.log("Express started"));
+}
 
 runGamesListSocketNamespace(io);
 runGamesStateSocketNamespace(io);
