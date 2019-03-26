@@ -21,10 +21,10 @@ import cookieSession from "cookie-session";
 import cors from "cors";
 
 // Socket.io imports.
-import { createServer } from "http";
+import { Server } from "net";
+import { createServer as createHttpServer } from "http";
+import { createServer as createHttpsServer } from "https";
 import socketIo from "socket.io";
-const socketServer = createServer(app);
-const io = socketIo(socketServer);
 
 // Express handlers.
 import { UsersCreatePostHandler } from "./handlers/UsersCreatePost";
@@ -58,6 +58,8 @@ app.get(getGameApiPathname(":gameId"), GamesGetHandler);
 app.post(gameJoinApiPathname(":gameId"), GamesJoinPostHandler);
 app.post(gameMakeMoveApiPathname(":gameId"), GamesMakeMovePostHandler);
 
+let socketServer: Server;
+
 if (process.env.NODE_ENV === "production") {
     const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
 
@@ -79,19 +81,25 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.join(frontendDistDir, "index.html"));
     });
 
-    require("greenlock-express")
+    const greenlock = require("greenlock-express")
         .create({
             app,
-            email: "albernigma@gmail.com",
             agreeTos: true,
+            approveDomains: ["tic-tac-toe-sm.tk", "tic-tac-toe-sm.tk"],
             configDir: "~/.config/acme/",
+            email: "albernigma@gmail.com",
         })
         .listen(80, 443);
+
+    socketServer = createHttpsServer(greenlock.tlsOptions, app);
 } else {
     app.listen(ApiServerPort, () => console.log("Express started"));
+
+    socketServer = createHttpServer(app);
 }
+
+const io = socketIo(socketServer);
+socketServer.listen(SocketServerPort, () => console.log("Socket server started"));
 
 runGamesListSocketNamespace(io);
 runGamesStateSocketNamespace(io);
-
-socketServer.listen(SocketServerPort, () => console.log("Socket server started"));
