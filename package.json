@@ -10,8 +10,9 @@
         "frontend:run": "rm -rf frontend/dist/* && webpack-dev-server --config ./frontend/webpack.dev.js",
         "backend:build-dev": "rm -rf backend/dist/* && tsc -p ./backend/tsconfig.json",
         "backend:build-prod": "npm run-script backend:build-dev && find backend/dist -name *.js | xargs -I '%' npx terser -m toplevel -d process.env.NODE_ENV='\"production\"' -c -o '%' -- '%' ",
-        "backend:run-dev": "npm run-script backend:build-dev && nodemon ./backend/dist/backend/src/app.js",
-        "backend:run-prod": "npm run-script backend:build-prod && node ./backend/dist/backend/src/app.js"
+        "backend:run-dev": "nodemon ./backend/dist/backend/src/app.js",
+        "backend:run-prod": "node ./backend/dist/backend/src/app.js",
+        "build-prod": "npm run-script frontend:prod && npm run-script backend:build-prod"
     },
     "dependencies": {
         "@babel/core": "7.4.0",
