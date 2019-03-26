@@ -27,7 +27,7 @@ const UnenhancedGamesOfMePage = ({ username }: GamesOfMePageProps) => {
     return (
         <Page
             isLoading={username === undefined}
-            style={{ paddingTop: "90px" }}
+            style={{ paddingTop: "80px" }}
             title="Deine Spiele"
         >
             {games === "Loading" ? (
