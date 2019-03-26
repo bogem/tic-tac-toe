@@ -19,6 +19,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import socketIo from "socket.io-client";
+import * as yup from "yup";
 
 import { GamesCreatePostResponseBody } from "../../../common/types/api/games/create/post/ResponseBody";
 import { GamesCreatePostRequestBody } from "../../../common/types/api/games/create/post/RequestBody";
@@ -146,13 +147,24 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
                             goToGamePlayPage(response.data);
                         });
                 }}
-                render={({ handleSubmit, values }) => (
+                validationSchema={yup.object().shape({
+                    name: yup.string().required("Bitte Spielname eingeben."),
+                    size: yup
+                        .number()
+                        .required("Bitte Feldgröße eingeben.")
+                        .min(3, "Minimal zulässige Feldgröße ist 3.")
+                        .max(20, "Maximal zulässige Feldgröße ist 20."),
+                })}
+                render={({ errors, handleSubmit, touched, values }) => (
                     <Form onSubmit={handleSubmit}>
                         <Box align="start">
                             <Field
                                 name="name"
                                 render={({ field }: FieldProps) => (
-                                    <FormField label="Spielname">
+                                    <FormField
+                                        error={touched.name && errors.name}
+                                        label="Spielname"
+                                    >
                                         <TextInput {...field} />
                                     </FormField>
                                 )}
@@ -166,6 +178,14 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
                                     </Box>
                                 )}
                             />
+
+                            {touched.size && errors.size && (
+                                <Box margin={{ bottom: "16px" }}>
+                                    <Text color="status-error" textAlign="center">
+                                        {errors.size}
+                                    </Text>
+                                </Box>
+                            )}
 
                             <Button alignSelf="center" label="Erstellen" primary type="submit" />
                         </Box>
