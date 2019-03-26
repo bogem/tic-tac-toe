@@ -81,15 +81,14 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.join(frontendDistDir, "index.html"));
     });
 
-    const greenlock = require("greenlock-express")
-        .create({
-            app,
-            agreeTos: true,
-            approveDomains: ["tic-tac-toe-sm.tk", "tic-tac-toe-sm.tk"],
-            configDir: "~/.config/acme/",
-            email: "albernigma@gmail.com",
-        })
-        .listen(80, 443);
+    const greenlock = require("greenlock-express").create({
+        app,
+        agreeTos: true,
+        approveDomains: ["tic-tac-toe-sm.tk", "tic-tac-toe-sm.tk"],
+        configDir: "~/.config/acme/",
+        email: "albernigma@gmail.com",
+    });
+    greenlock.listen(80, 443);
 
     socketServer = createHttpsServer(greenlock.tlsOptions, app);
 } else {
