@@ -29,7 +29,9 @@ export const getGameBoard = (gameId: GameId): Promise<GameBoard> =>
         );
     });
 
-export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords: GameBoardCoords[] } | undefined => {
+export const isWin = (
+    gameBoard: GameBoard
+): { winnerUsername: string; winCoords: GameBoardCoords[] } | undefined => {
     if (gameBoard.length === 0) {
         return undefined;
     }
@@ -44,13 +46,16 @@ export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords
         const foundRow = gameBoard[foundRowIndex];
         return {
             winnerUsername: foundRow[0]!,
-            winCoords: range(foundRow.length).map(columnIndex => ({ row: foundRowIndex, column: columnIndex })),
+            winCoords: range(foundRow.length).map((columnIndex) => ({
+                row: foundRowIndex,
+                column: columnIndex,
+            })),
         };
     }
 
     // 2. Check columns.
-    const columns = range(columnsCount).map(columnIndex =>
-        range(rowsCount).map(rowIndex => gameBoard[rowIndex][columnIndex])
+    const columns = range(columnsCount).map((columnIndex) =>
+        range(rowsCount).map((rowIndex) => gameBoard[rowIndex][columnIndex])
     );
 
     const foundColumnIndex = findRowIndexWithSameString(columns);
@@ -59,7 +64,10 @@ export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords
         const foundColumn = columns[foundColumnIndex];
         return {
             winnerUsername: foundColumn[0]!,
-            winCoords: range(foundColumn.length).map(rowIndex => ({ row: rowIndex, column: foundColumnIndex })),
+            winCoords: range(foundColumn.length).map((rowIndex) => ({
+                row: rowIndex,
+                column: foundColumnIndex,
+            })),
         };
     }
 
@@ -70,20 +78,22 @@ export const isWin = (gameBoard: GameBoard): { winnerUsername: string; winCoords
     }
 
     // 3.1 Check "dexter" diagonal: https://en.wikipedia.org/wiki/Bend_(heraldry).
-    const dexterDiagonal = range(gameBoard.length).map(index => gameBoard[index][index]);
+    const dexterDiagonal = range(gameBoard.length).map((index) => gameBoard[index][index]);
     if (hasRowSameString(dexterDiagonal)) {
         return {
             winnerUsername: dexterDiagonal[0]!,
-            winCoords: range(dexterDiagonal.length).map(index => ({ row: index, column: index })),
+            winCoords: range(dexterDiagonal.length).map((index) => ({ row: index, column: index })),
         };
     }
 
     // 3.2 Check "sinister" diagonal.
-    const sinisterDiagonal = range(gameBoard.length).map(index => gameBoard[index][columnsCount - index - 1]);
+    const sinisterDiagonal = range(gameBoard.length).map(
+        (index) => gameBoard[index][columnsCount - index - 1]
+    );
     if (hasRowSameString(sinisterDiagonal)) {
         return {
             winnerUsername: sinisterDiagonal[0]!,
-            winCoords: range(sinisterDiagonal.length).map(index => ({
+            winCoords: range(sinisterDiagonal.length).map((index) => ({
                 row: index,
                 column: columnsCount - index - 1,
             })),
@@ -100,7 +110,8 @@ const hasRowSameString = (row: any[]) => {
 };
 
 // isFieldFill shows, if all cells are occupied, i.e. every cell is not null.
-export const isFieldFull = (gameBoard: GameBoard) => gameBoard.every(row => row.every(cell => cell !== null));
+export const isFieldFull = (gameBoard: GameBoard) =>
+    gameBoard.every((row) => row.every((cell) => cell !== null));
 
 // PUTs
 

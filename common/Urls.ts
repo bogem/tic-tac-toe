@@ -1,13 +1,19 @@
 import { GameId } from "./types/Game";
 import { checkEnvVariable } from "./Env";
 
-if (typeof window === "undefined" && typeof process !== "undefined" && process.env.NODE_ENV === "production") {
+if (
+    typeof window === "undefined" &&
+    typeof process !== "undefined" &&
+    process.env.NODE_ENV === "production"
+) {
     checkEnvVariable("SERVER_URL");
 }
 
-export const ServerUrl = process.env.NODE_ENV === "production" ? process.env.SERVER_URL : "http://localhost";
+export const ServerUrl =
+    process.env.NODE_ENV === "production" ? process.env.SERVER_URL : "http://localhost";
 
-export const ClientUrl = process.env.NODE_ENV === "production" ? ServerUrl : "http://localhost:3002";
+export const ClientUrl =
+    process.env.NODE_ENV === "production" ? ServerUrl : "http://localhost:3002";
 
 export const ApiServerPort = process.env.NODE_ENV === "production" ? 443 : 3000;
 export const ApiServerUrl = `${ServerUrl}:${ApiServerPort}`;
@@ -16,7 +22,9 @@ export const SocketServerPort = 3001;
 export const SocketServerUrl = `${ServerUrl}:${SocketServerPort}`;
 
 export const DynamoDbUrl =
-    process.env.NODE_ENV === "production" ? "dynamodb.eu-central-1.amazonaws.com" : "http://localhost:8000";
+    process.env.NODE_ENV === "production"
+        ? "dynamodb.eu-central-1.amazonaws.com"
+        : "http://localhost:8000";
 
 export enum PagePathname {
     Root = "/",
@@ -39,8 +47,11 @@ export enum ApiPathname {
 }
 
 export const getGameApiPathname = (gameId: GameId | ":gameId") => `/api/games/${gameId}`;
+
 export const gameJoinApiPathname = (gameId: GameId | ":gameId") => `/api/games/${gameId}/join`;
-export const gameMakeMoveApiPathname = (gameId: GameId | ":gameId") => `/api/games/${gameId}/make_move`;
+
+export const gameMakeMoveApiPathname = (gameId: GameId | ":gameId") =>
+    `/api/games/${gameId}/make_move`;
 
 export enum SocketNamespacePathname {
     GamesList = "/games/list",

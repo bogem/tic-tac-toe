@@ -16,6 +16,7 @@ import { GamePlayPage } from "./pages/GamePlay";
 import { LogoutPage } from "./pages/Logout";
 import { PagePathname, gamesPlayPagePathname } from "../../common/Urls";
 import { GamesOfMePage } from "./pages/GamesOfMe";
+import { Page } from "./components/Page";
 
 const App = () => (
     <BrowserRouter>
@@ -41,7 +42,10 @@ const App = () => (
                     <Route path={PagePathname.Home} component={HomePage} />
                     <Route path={gamesPlayPagePathname(":gameId")} component={GamePlayPage} />
                     <Route path={PagePathname.GamesOfMe} component={GamesOfMePage} />
-                    <Route path="/" component={() => <h1>404 Page Not Found</h1>} />
+                    <Route
+                        path="/"
+                        component={() => <Page title="404 Page Not Found">404 Page Not Found</Page>}
+                    />
                 </Switch>
             </Grommet>
         </Provider>

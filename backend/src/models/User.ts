@@ -1,4 +1,4 @@
-import { UsersCreatePostRequestBody } from "../types/api/users/create/post/RequestBody";
+import { UsersCreatePostRequestBody } from "../../../common/types/api/users/create/post/RequestBody";
 import { put } from "../db/Fns";
 import { docClient } from "../db/Db";
 import { TableName } from "../db/Tables";
@@ -44,4 +44,5 @@ export const doesUserExist = (username: string): Promise<boolean> =>
 
 // PUTs
 
-export const putUser = (user: UsersCreatePostRequestBody) => put({ TableName: TableName.Users, Item: user });
+export const putUser = (user: UsersCreatePostRequestBody) =>
+    put({ TableName: TableName.Users, Item: user });

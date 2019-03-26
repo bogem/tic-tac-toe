@@ -24,7 +24,7 @@ export const runGamesListSocketNamespace = (io: Server) => {
     // Gets created games and emits to namespace,
     // if there is someone connected.
     const updateAndEmitGamesList = () => {
-        getOnlyCreatedGames().then(games => {
+        getOnlyCreatedGames().then((games) => {
             setGamesList(games);
 
             if (Object.keys(gamesListNamespace.connected).length > 0) {

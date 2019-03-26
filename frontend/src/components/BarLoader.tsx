@@ -1,7 +1,8 @@
 // The MIT License (MIT)
 // Copyright (c) 2017 David Hu
 //
-// BarLoader is a Typescript and styled-components implementation of https://github.com/davidhu2000/react-spinners/blob/master/src/BarLoader.jsx.
+// BarLoader is a Typescript and styled-components implementation
+// of github.com/davidhu2000/react-spinners/blob/master/src/BarLoader.jsx.
 // Author of original: David Hu.
 
 import React from "react";
@@ -47,10 +48,10 @@ interface WrapperProps {
 const Wrapper = styled.div<WrapperProps>`
     background-clip: padding-box;
     background-color: rgba(0, 115, 157, 0.2);
-    height: ${props => props.height}px;
+    height: ${(props) => props.height}px;
     overflow: hidden;
     position: relative;
-    width: ${props => props.width}px;
+    width: ${(props) => props.width}px;
 `;
 
 interface BarProps {
@@ -58,8 +59,12 @@ interface BarProps {
 }
 
 export const Bar = styled.div<BarProps>`
-    animation: ${props => (props.i === 1 ? long : short)} 2.1s ${props => (props.i === 2 ? "1.15s" : "")}
-        ${props => (props.i === 1 ? "cubic-bezier(0.65, 0.815, 0.735, 0.395)" : "cubic-bezier(0.165, 0.84, 0.44, 1)")}
+    animation: ${(props) => (props.i === 1 ? long : short)} 2.1s
+        ${(props) => (props.i === 2 ? "1.15s" : "")}
+        ${(props) =>
+            props.i === 1
+                ? "cubic-bezier(0.65, 0.815, 0.735, 0.395)"
+                : "cubic-bezier(0.165, 0.84, 0.44, 1)"}
         infinite;
     animation-fill-mode: forwards;
     background-clip: padding-box;

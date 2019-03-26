@@ -5,7 +5,10 @@ import { Heading, Form, TextInput, Text, Button, Box, Anchor, FormField } from "
 import * as yup from "yup";
 
 import { Page } from "../components/Page";
-import { environmentRegister, environmentLogin } from "../stores/environmentStore/EnvironmentThunks";
+import {
+    environmentRegister,
+    environmentLogin,
+} from "../stores/environmentStore/EnvironmentThunks";
 import { RootDispatch, RootState } from "../stores/rootStore/RootTypes";
 import { RouteComponentProps } from "react-router";
 import { getIsLoggedIn } from "../stores/environmentStore/EnvironmentSelectors";
@@ -30,7 +33,7 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
     return (
         <Formik
             initialValues={{ username: "", password: "", isRegistering: false }}
-            onSubmit={values => {
+            onSubmit={(values) => {
                 const submitFunc = values.isRegistering ? props.register : props.login;
                 submitFunc(values.username, values.password);
             }}
@@ -51,7 +54,12 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
                         <Heading level="1">Tic-Tac-Toe</Heading>
 
                         <Form onSubmit={handleSubmit}>
-                            <Box align="center" gap="small" margin={{ bottom: "24px" }} width="220px">
+                            <Box
+                                align="center"
+                                gap="small"
+                                margin={{ bottom: "24px" }}
+                                width="220px"
+                            >
                                 <Field
                                     name="username"
                                     render={({ field }: FieldProps) => (
@@ -65,7 +73,11 @@ const UnenhancedLoginPage = (props: LoginPageProps) => {
                                     name="password"
                                     render={({ field }: FieldProps) => (
                                         <FormField error={touched.password && errors.password}>
-                                            <TextInput {...field} placeholder="Passwort" type="password" />
+                                            <TextInput
+                                                {...field}
+                                                placeholder="Passwort"
+                                                type="password"
+                                            />
                                         </FormField>
                                     )}
                                 />
@@ -106,7 +118,9 @@ export const LoginPage = connect(
         isLoggedIn: getIsLoggedIn(environment.me),
     }),
     (dispatch: RootDispatch) => ({
-        login: (username: string, password: string) => dispatch(environmentLogin(username, password)),
-        register: (username: string, password: string) => dispatch(environmentRegister(username, password)),
+        login: (username: string, password: string) =>
+            dispatch(environmentLogin(username, password)),
+        register: (username: string, password: string) =>
+            dispatch(environmentRegister(username, password)),
     })
 )(UnenhancedLoginPage);

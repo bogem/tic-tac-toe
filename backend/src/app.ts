@@ -63,7 +63,7 @@ let socketServer: Server;
 if (process.env.NODE_ENV === "production") {
     const frontendDistDir = path.join(__dirname, "../../../../frontend/dist");
 
-    app.get("*.js", function(req, res) {
+    app.get("*.js", (req, res) => {
         res.set("Content-Type", "text/javascript");
 
         const filePath = path.join(frontendDistDir, req.url);

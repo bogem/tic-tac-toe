@@ -12,7 +12,10 @@ import { axios, isResponseSuccessBody } from "../utils/Api";
 import { GameEventName, Game, gameStatus, opponentUsername } from "../../../common/types/Game";
 import { GameBoard as GameBoardType, GameBoardCoords } from "../../../common/types/GameBoard";
 import { RootState } from "../stores/rootStore/RootTypes";
-import { CurrentGameStateEventData, GameStateEventName } from "../../../common/types/sockets/GamesState";
+import {
+    CurrentGameStateEventData,
+    GameStateEventName,
+} from "../../../common/types/sockets/GamesState";
 import { GamesMakeMoveRequestBody } from "../../../common/types/api/games/make_move/RequestBody";
 import {
     SocketServerUrl,
@@ -42,11 +45,15 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
             return;
         }
 
-        const fetchGame = (): AxiosPromise<GamesGetResponseBody> => axios.get(getGameApiPathname(gameId));
+        const fetchGame = (): AxiosPromise<GamesGetResponseBody> =>
+            axios.get(getGameApiPathname(gameId));
         const joinGame = () => axios.post(gameJoinApiPathname(gameId));
         const listenToGameSocket = () => {
             socket = socketIo(SocketServerUrl + SocketNamespacePathname.GamesState);
-            socket.emit(GameStateEventName.SubscribeToGameStateChanges, { gameId, username });
+            socket.emit(GameStateEventName.SubscribeToGameStateChanges, {
+                gameId,
+                username,
+            });
 
             socket.on(GameStateEventName.CurrentGameState, (data: CurrentGameStateEventData) => {
                 setGame(data.game);
@@ -54,16 +61,21 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
             });
         };
 
-        fetchGame().then(response => {
+        fetchGame().then((response) => {
             const game = response.data;
 
             setGame(game);
 
             if (game.hostUsername !== username && !game.guestUsername) {
-                // If current user is not the host and there is no guest in the game,
+                // If current user is not the host
+                // and there is no guest in the game,
                 // then join it.
                 joinGame().then(listenToGameSocket);
-            } else if (game.hostUsername !== username && game.guestUsername && game.guestUsername !== username) {
+            } else if (
+                game.hostUsername !== username &&
+                game.guestUsername &&
+                game.guestUsername !== username
+            ) {
                 // Show error that there is a player already
                 toast.error("Du darfst in diesem Spiel nicht teilnehmen");
                 history.push(PagePathname.Home + "#join-game");
@@ -93,13 +105,16 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
         newGameBoard[row] = newGameBoardRow;
 
         setGameBoard(newGameBoard);
-        axios.post(gameMakeMoveApiPathname(gameId), { coords: { row, column } } as GamesMakeMoveRequestBody);
+        axios.post(gameMakeMoveApiPathname(gameId), {
+            coords: { row, column },
+        } as GamesMakeMoveRequestBody);
     };
 
     const isGameBoardEnabled =
         game &&
         ((game.lastEvent.name === GameEventName.OpponentJoin && game.hostUsername === username) ||
-            (game.lastEvent.name === GameEventName.GamerMove && game.lastEvent.meta.username !== username));
+            (game.lastEvent.name === GameEventName.GamerMove &&
+                game.lastEvent.meta.username !== username));
 
     const isGameEnd =
         game &&
@@ -124,7 +139,12 @@ const UnenhancedGamePlayPage = ({ history, match, username }: GamePlayPageProps)
                         )}
                     </Box>
 
-                    <Text margin={{ bottom: "24px" }} size="xlarge" textAlign="center" weight="bold">
+                    <Text
+                        margin={{ bottom: "24px" }}
+                        size="xlarge"
+                        textAlign="center"
+                        weight="bold"
+                    >
                         {gameStatus(game, username!)}
                     </Text>
                 </>
@@ -195,13 +215,20 @@ const GameBoard = (props: GameBoardProps) => {
                             const isWinCell =
                                 props.winCoords &&
                                 props.winCoords.some(
-                                    winCoord => winCoord.row === rowIndex && winCoord.column === columnIndex
+                                    (winCoord) =>
+                                        winCoord.row === rowIndex && winCoord.column === columnIndex
                                 );
 
                             return (
                                 <GameBoardCell
                                     childrenOnHover={childrenOnHover}
-                                    color={isWinCell ? (props.isUserWon ? "#333" : "#ff4040") : undefined}
+                                    color={
+                                        isWinCell
+                                            ? props.isUserWon
+                                                ? "#333"
+                                                : "#ff4040"
+                                            : undefined
+                                    }
                                     disabled={props.disabled}
                                     key={columnIndex}
                                     onClick={() => props.onCellClick(rowIndex, columnIndex)}
@@ -235,7 +262,13 @@ interface GameBoardCellProps {
     onClick: () => void;
 }
 
-const UnstyledGameBoardCell = ({ childrenOnHover, children, className, disabled, onClick }: GameBoardCellProps) => {
+const UnstyledGameBoardCell = ({
+    childrenOnHover,
+    children,
+    className,
+    disabled,
+    onClick,
+}: GameBoardCellProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -244,7 +277,9 @@ const UnstyledGameBoardCell = ({ childrenOnHover, children, className, disabled,
             onMouseOver={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={disabled ? undefined : onClick}
-            style={isHovered && !children && !disabled ? { color: "rgba(79, 79, 79, 0.5)" } : undefined}
+            style={
+                isHovered && !children && !disabled ? { color: "rgba(79, 79, 79, 0.5)" } : undefined
+            }
         >
             {children || (isHovered && !disabled && childrenOnHover) || null}
         </td>
@@ -252,9 +287,9 @@ const UnstyledGameBoardCell = ({ childrenOnHover, children, className, disabled,
 };
 
 const GameBoardCell = styled(UnstyledGameBoardCell)`
-    border: 1px solid ${props => (props.disabled ? "#dadada" : "#4f4f4f")};
-    color: ${props => props.color || (props.disabled ? "#dadada" : "#4f4f4f")};
-    cursor: ${props => (props.disabled || props.children !== null ? "not-allowed" : "pointer")};
+    border: 1px solid ${(props) => (props.disabled ? "#dadada" : "#4f4f4f")};
+    color: ${(props) => props.color || (props.disabled ? "#dadada" : "#4f4f4f")};
+    cursor: ${(props) => (props.disabled || props.children !== null ? "not-allowed" : "pointer")};
     font-size: 36px;
     font-weight: bold;
     text-align: center;

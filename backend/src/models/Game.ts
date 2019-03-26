@@ -1,9 +1,8 @@
 import { sortBy } from "lodash";
 
-import { GameEvent, Game, GameId } from "../../../common/types/Game";
+import { GameEvent, GameEventName, Game, GameId } from "../../../common/types/Game";
 import { docClient } from "../db/Db";
 import { put, update } from "../db/Fns";
-import { GameEventName } from "../../../common/types/Game";
 import { TableName } from "../db/Tables";
 
 export const ERROR_GAME_NOT_FOUND = new Error("Game not found");
@@ -65,7 +64,12 @@ export const isUserInGame = (gameId: GameId, username: string): Promise<boolean>
                     reject(err);
                 } else {
                     const game = data.Item as Game | undefined;
-                    resolve(Boolean(game && (game.hostUsername === username || game.guestUsername === username)));
+                    resolve(
+                        Boolean(
+                            game &&
+                                (game.hostUsername === username || game.guestUsername === username)
+                        )
+                    );
                 }
             }
         );

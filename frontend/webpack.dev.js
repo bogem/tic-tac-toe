@@ -18,6 +18,9 @@ module.exports = merge(common, {
 
     plugins: [
         new NamedModulesPlugin(),
-        new ForkTsCheckerWebpackPlugin({ tsconfig: path.join(__dirname, "tsconfig.json"), watch: __dirname }),
+        new ForkTsCheckerWebpackPlugin({
+            tsconfig: path.join(__dirname, "tsconfig.json"),
+            watch: __dirname,
+        }),
     ],
 });

@@ -26,18 +26,25 @@ export const environmentGetEnvironment = () => (dispatch: RootDispatch) => {
         .then((response: AxiosResponse<UsersMeGetResponseBody>) => {
             dispatch(environmentSetMe(response.data));
         })
-        .catch(error => {
+        .catch((error) => {
             if (error.response && error.response.status === 404) {
                 dispatch(environmentSetMe("Not Logged In"));
             }
         });
 };
 
-export const environmentLogin = (username: string, password: string) => (dispatch: RootDispatch) => {
+export const environmentLogin = (username: string, password: string) => (
+    dispatch: RootDispatch
+) => {
     dispatch(environmentSetMe("Loading"));
 
+    const requestBody = {
+        username,
+        password,
+    } as UsersLoginPostRequestBody;
+
     return axios
-        .post(ApiPathname.UsersLogin, { username, password } as UsersLoginPostRequestBody)
+        .post(ApiPathname.UsersLogin, requestBody)
         .then((response: AxiosResponse<UsersLoginPostResponseBody>) => {
             dispatch(environmentSetMe(response.data));
 
@@ -57,7 +64,10 @@ export const environmentLogin = (username: string, password: string) => (dispatc
 
                 if (status === 404 && data === UsersLoginPostErrorMessage.NonexistentUser) {
                     toast.error("Dieser Benutzer existiert nicht");
-                } else if (status === 400 && data === UsersLoginPostErrorMessage.IncorrectPassword) {
+                } else if (
+                    status === 400 &&
+                    data === UsersLoginPostErrorMessage.IncorrectPassword
+                ) {
                     toast.error("Passwort stimmt nicht");
                 }
             }
@@ -66,11 +76,16 @@ export const environmentLogin = (username: string, password: string) => (dispatc
         });
 };
 
-export const environmentRegister = (username: string, password: string) => (dispatch: RootDispatch) => {
+export const environmentRegister = (username: string, password: string) => (
+    dispatch: RootDispatch
+) => {
     dispatch(environmentSetMe("Loading"));
 
     return axios
-        .post(ApiPathname.UsersCreate, { username, password } as UsersCreatePostRequestBody)
+        .post(ApiPathname.UsersCreate, {
+            username,
+            password,
+        } as UsersCreatePostRequestBody)
         .then((response: AxiosResponse<UsersCreatePostResponseBody>) => {
             dispatch(environmentSetMe(response.data));
 

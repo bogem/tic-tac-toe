@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 
-import { UsersMeGetResponseBody } from "../types/api/users/me/get/ResponseBody";
+import { UsersMeGetResponseBody } from "../../../common/types/api/users/me/get/ResponseBody";
 import { getUsernameWithToken } from "../models/Token";
 import { handleError } from "../utils/Errors";
 

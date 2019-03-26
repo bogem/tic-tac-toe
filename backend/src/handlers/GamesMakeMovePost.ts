@@ -48,14 +48,20 @@ export const GamesMakeMovePostHandler: RequestHandler = async (req, res) => {
 
         const winData = isWin(gameBoard);
         if (winData) {
-            await updateGameLastEvent(gameId, { name: GameEventName.GameEndWithWinner, meta: winData });
+            await updateGameLastEvent(gameId, {
+                name: GameEventName.GameEndWithWinner,
+                meta: winData,
+            });
             gameEndEventEmitter.emitGameEnd(gameId);
         } else if (isFieldFull(gameBoard)) {
             // If there is no win and field is full, then there is a draw.
             await updateGameLastEvent(gameId, { name: GameEventName.GameEndWithDraw });
             gameEndEventEmitter.emitGameEnd(gameId);
         } else {
-            await updateGameLastEvent(gameId, { name: GameEventName.GamerMove, meta: { username, coords } });
+            await updateGameLastEvent(gameId, {
+                name: GameEventName.GamerMove,
+                meta: { username, coords },
+            });
             gameMoveEventEmitter.emitGameMove(gameId);
         }
 

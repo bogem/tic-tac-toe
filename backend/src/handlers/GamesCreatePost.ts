@@ -24,10 +24,10 @@ export const GamesCreatePostHandler: RequestHandler = async (req, res) => {
         const hostUsername = await getUsernameWithToken(token);
 
         const game = {
+            hostUsername,
             lastEvent: {
                 name: GameEventName.GameCreation as GameEventName.GameCreation,
             },
-            hostUsername,
             id: gameId,
             ...body,
         };

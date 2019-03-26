@@ -10,7 +10,10 @@ export const ERROR_USERNAME_NOT_FOUND = new Error("Username not found");
 
 export const deleteToken = (token: string): Promise<void> =>
     new Promise((resolve, reject) => {
-        docClient.delete({ TableName: TableName.Tokens, Key: { token } }, onlyErrDocClientCallback(resolve, reject));
+        docClient.delete(
+            { TableName: TableName.Tokens, Key: { token } },
+            onlyErrDocClientCallback(resolve, reject)
+        );
     });
 
 // GETs

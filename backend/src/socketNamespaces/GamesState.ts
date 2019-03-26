@@ -7,7 +7,7 @@ import {
 } from "../../../common/types/sockets/GamesState";
 import { opponentJoinEventEmitter } from "../eventEmitters/OpponentJoin";
 import { gameMoveEventEmitter } from "../eventEmitters/GameMove";
-import { GameId } from "../types/Game";
+import { GameId } from "../../../common/types/Game";
 import { getGame, isUserInGame } from "../models/Game";
 import { getGameBoard } from "../models/GameBoard";
 import { gameEndEventEmitter } from "../eventEmitters/GameEnd";
@@ -18,31 +18,32 @@ export const runGamesStateSocketNamespace = (io: Server) => {
 
     const emitCurrentGameState = (gameId: GameId) =>
         Promise.all([getGame(gameId), getGameBoard(gameId)]).then(([game, gameBoard]) => {
-            namespace
-                .to(gameId)
-                .emit(GameStateEventName.CurrentGameState, { game, gameBoard } as CurrentGameStateEventData);
+            namespace.to(gameId).emit(GameStateEventName.CurrentGameState, {
+                game,
+                gameBoard,
+            } as CurrentGameStateEventData);
         });
 
     const subscribeToOpponentJoin = () => {
-        opponentJoinEventEmitter.onOpponentJoin(gameId => {
+        opponentJoinEventEmitter.onOpponentJoin((gameId) => {
             emitCurrentGameState(gameId);
         });
     };
 
     const subscribeToGameMove = () => {
-        gameMoveEventEmitter.onGameMove(gameId => {
+        gameMoveEventEmitter.onGameMove((gameId) => {
             emitCurrentGameState(gameId);
         });
     };
 
     const subscribeToGameEnd = () => {
-        gameEndEventEmitter.onGameEnd(gameId => {
+        gameEndEventEmitter.onGameEnd((gameId) => {
             emitCurrentGameState(gameId);
         });
     };
 
     const runNamespace = () => {
-        namespace.on("connection", socket => {
+        namespace.on("connection", (socket) => {
             socket.on(
                 GameStateEventName.SubscribeToGameStateChanges,
                 ({ gameId, username }: SubscribeToGameChangesEventData) => {

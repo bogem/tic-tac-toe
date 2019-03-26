@@ -44,7 +44,9 @@ export const gameStatus = (game: Game, username: string) => {
             return "Warte auf Gast ⌛️";
 
         case GameEventName.OpponentJoin:
-            return game.hostUsername === username ? "Dein Zug 👊" : `${opponentUsername(game, username)}'s Zug ⌛️`;
+            return game.hostUsername === username
+                ? "Dein Zug 👊"
+                : `${opponentUsername(game, username)}'s Zug ⌛️`;
 
         case GameEventName.GamerMove:
             return game.lastEvent.meta.username === username
@@ -52,7 +54,9 @@ export const gameStatus = (game: Game, username: string) => {
                 : "Dein Zug 👊";
 
         case GameEventName.GameEndWithWinner:
-            return game.lastEvent.meta.winnerUsername === username ? "Du hast gewonnen 🎉" : "Du hast verloren 👎";
+            return game.lastEvent.meta.winnerUsername === username
+                ? "Du hast gewonnen 🎉"
+                : "Du hast verloren 👎";
 
         case GameEventName.GameEndWithDraw:
             return "Das Remis 🤷‍♂️";

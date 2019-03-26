@@ -25,16 +25,23 @@ const UnenhancedGamesOfMePage = ({ username }: GamesOfMePageProps) => {
     }, []);
 
     return (
-        <Page isLoading={username === undefined} style={{ paddingTop: "90px" }} title="Deine Spiele">
+        <Page
+            isLoading={username === undefined}
+            style={{ paddingTop: "90px" }}
+            title="Deine Spiele"
+        >
             {games === "Loading" ? (
                 <Text>Laden ...</Text>
             ) : games.length === 0 ? (
                 <Text>Du hast noch nicht gespielt</Text>
             ) : (
-                games.map(game => (
+                games.map((game) => (
                     <GameList>
                         <li>
-                            <b>Name:</b> <RoutedAnchor path={gamesPlayPagePathname(game.id)}>{game.name}</RoutedAnchor>
+                            <b>Name:</b>{" "}
+                            <RoutedAnchor path={gamesPlayPagePathname(game.id)}>
+                                {game.name}
+                            </RoutedAnchor>
                         </li>
 
                         <ul>

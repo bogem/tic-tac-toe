@@ -63,7 +63,7 @@ export const HomePage = ({ location, history }: RouteComponentProps) => {
             </Box>
             {location.hash === "#create-game" && (
                 <CreateGameModal
-                    goToGamePlayPage={gameId => history.push(gamesPlayPagePathname(gameId))}
+                    goToGamePlayPage={(gameId) => history.push(gamesPlayPagePathname(gameId))}
                     onClose={closeModal}
                 />
             )}
@@ -88,7 +88,12 @@ interface JoinGameModalProps extends HomeModalProps {
 }
 
 const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
-    <Layer onClickOutside={onClose} onEsc={onClose} responsive={false} style={{ maxHeight: "1000px" }}>
+    <Layer
+        onClickOutside={onClose}
+        onEsc={onClose}
+        responsive={false}
+        style={{ maxHeight: "1000px" }}
+    >
         <Box pad="medium">
             {games.length === 0 ? (
                 <Text>Keine Spiele ...</Text>
@@ -100,10 +105,12 @@ const JoinGameModal = ({ games, onClose }: JoinGameModalProps) => (
                         <TableCell scope="col">Größe</TableCell>
                     </TableHeader>
                     <TableBody>
-                        {games.map(game => (
+                        {games.map((game) => (
                             <TableRow>
                                 <TableCell scope="row">
-                                    <RoutedAnchor path={gamesPlayPagePathname(game.id)}>{game.name}</RoutedAnchor>
+                                    <RoutedAnchor path={gamesPlayPagePathname(game.id)}>
+                                        {game.name}
+                                    </RoutedAnchor>
                                 </TableCell>
                                 <TableCell>{game.hostUsername}</TableCell>
                                 <TableCell>
@@ -126,8 +133,13 @@ const CreateGameModal = ({ goToGamePlayPage, onClose }: CreateGameProps) => (
     <Layer onClickOutside={onClose} onEsc={onClose} responsive={false}>
         <Box pad="medium">
             <Formik
-                initialValues={{ name: randomName(), size: 3 } as GamesCreatePostRequestBody}
-                onSubmit={values => {
+                initialValues={
+                    {
+                        name: randomName(),
+                        size: 3,
+                    } as GamesCreatePostRequestBody
+                }
+                onSubmit={(values) => {
                     axios
                         .post(ApiPathname.GamesCreate, values)
                         .then((response: AxiosResponse<GamesCreatePostResponseBody>) => {
