@@ -6,7 +6,8 @@ Used technologies:
 * React
 * Redux
 * TypeScript
+* styled-components
 * Grommet
 * Express
+* DynamoDB
 * Socket.IO
-* styled-components
