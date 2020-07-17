@@ -51,7 +51,7 @@
         "grommet": "2.5.5",
         "grommet-icons": "4.2.0",
         "html-webpack-plugin": "3.2.0",
-        "lodash": "4.17.15",
+        "lodash": "4.17.19",
         "lodash-webpack-plugin": "0.11.5",
         "react": "16.8.4",
         "react-dom": "16.8.4",
